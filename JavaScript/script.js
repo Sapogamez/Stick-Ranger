@@ -33,14 +33,12 @@ function debugLog(message, type = 'info') {
     
     // Also log to browser console
     console.log(`[DEBUG] ${message}`);
-}
 
 
 function clearDebug() {
     if (debugOutput) {
         debugOutput.innerHTML = '<div class="debug-line">Debug console cleared...</div>';
     }
-}
 
 
 function updatePlayerCard(card, className) {
@@ -103,7 +101,6 @@ function updatePlayerCard(card, className) {
     } catch (error) {
         debugLog(`ERROR updating player card: ${error.message}`, 'error');
     }
-}
 
 
 function updateStickFigure(card, className, stats) {
@@ -143,7 +140,6 @@ function updateStickFigure(card, className, stats) {
     const scale = 0.8 + (totalStats / 150);
     stickFigure.style.transform = `scale(${scale})`;
     debugLog(`Stick figure updated: ${className} with scale ${scale.toFixed(2)} and animation speed ${animationSpeed.toFixed(1)}s`, 'success');
-}
 
 
 // Map functionality
@@ -415,8 +411,6 @@ function addHealthBarsToPlayers() {
             healthBar.appendChild(healthFill);
             playerElement.appendChild(healthBar);
         }
-    });
-}
 
 function getPlayerStats(playerIndex) {
     const playerCard = document.querySelectorAll('.player-card')[playerIndex - 1];
@@ -681,7 +675,7 @@ function processCombatTurn() {
             }
         }
     });
-}
+// Priest infinite range healing
 function healNearbyPlayersInfiniteRange(priest, playerPositions) {
     let healed = false;
     // Find most damaged player (lowest HP, not self, not dead)
@@ -797,7 +791,7 @@ document.addEventListener('DOMContentLoaded', function() {
         debugLog(`Setting up player card ${index + 1}`, 'info');
         
         const select = card.querySelector('.class-select');
-        const applyBtn = card.querySelector('.apply-btn');
+        const applyBtn = card.querySelector('.apply-class');
         const currentClass = card.querySelector('.player-class').textContent.trim();
         
         if (!select) {
@@ -805,7 +799,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         if (!applyBtn) {
-            debugLog(`ERROR: Missing .apply-btn button in card ${index + 1}`, 'error');
+            debugLog(`ERROR: Missing .apply-class button in card ${index + 1}`, 'error');
             return;
         }
         
@@ -850,7 +844,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize equipment tab system
     initializeEquipmentTabs();
-});
+}
+);
 
 // Equipment Tab System
 function initializeEquipmentTabs() {
