@@ -1,0 +1,932 @@
+/* Stick Ranger RPG Styles v3 - Complete Working Version */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #333;
+    height: 100vh;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.game-container {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 2fr auto 1fr;
+    gap: 5px;
+}
+
+/* Top Row - Game box, Map, Debug */
+.top-row {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr;
+    gap: 5px;
+}
+
+.game-box {
+    background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 70%, #228B22 70%, #228B22 100%);
+    border: 3px solid #000;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.map-box {
+    background: #87CEEB;
+    border: 3px solid #000;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-box h3 {
+    color: #000;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.debug-box {
+    background: #87CEEB;
+    border: 3px solid #000;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.debug-box h3 {
+    color: #000;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* Middle Row - Combat Log and Auto Battle */
+.middle-row {
+    display: flex;
+    gap: 5px;
+    height: 80px;
+}
+
+.combat-section {
+    background: #87CEEB;
+    border: 3px solid #000;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.combat-log-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.combat-log-container h3 {
+    color: #000;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+#combat-log {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 5px;
+    height: 50px;
+    overflow-y: auto;
+    font-size: 11px;
+    font-family: monospace;
+    color: #000;
+}
+
+#auto-battle-btn {
+    padding: 8px 16px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+#auto-battle-btn.active {
+    background: #4CAF50;
+}
+
+#auto-battle-btn:hover {
+    opacity: 0.9;
+}
+
+/* Bottom Row - Player cards */
+.bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 5px;
+}
+
+.player-card {
+    background: #87CEEB;
+    border: 3px solid #000;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 12px;
+    color: #000;
+    min-height: 250px;
+}
+
+.player-card h3 {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Tab System */
+.card-tabs {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 6px 4px;
+    background: #5a9fd4;
+    color: #000;
+    border: none;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.tab-btn:not(:last-child) {
+    border-right: 1px solid #000;
+}
+
+.tab-btn.active {
+    background: #87CEEB;
+    color: #000;
+}
+
+.tab-btn:hover:not(.active) {
+    background: #6ba6d6;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    width: 100%;
+    flex: 1;
+}
+
+.tab-content.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Class Tab Styles */
+.player-class {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.class-select {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 4px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 11px;
+}
+
+.apply-class {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 6px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.apply-class:hover {
+    background: #45a049;
+}
+
+.player-stats {
+    width: 100%;
+    font-size: 11px;
+}
+
+.player-stats div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3px;
+}
+
+/* Equipment Tab Styles */
+.equipment-slots {
+    width: 100%;
+    font-size: 10px;
+    margin-bottom: 10px;
+}
+
+.equipment-slots div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    padding: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.equipment-stats {
+    width: 100%;
+    font-size: 10px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.equipment-stats div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+/* Inventory Tab Styles */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    width: 100%;
+}
+
+.inventory-slot {
+    background: rgba(0, 0, 0, 0.1);
+    border: 2px solid #000;
+    border-radius: 4px;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #666;
+    cursor: pointer;
+}
+
+.inventory-slot:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Grass Floor */
+.grass-floor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(to bottom, #32CD32 0%, #228B22 100%);
+    background-image: 
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(34, 139, 34, 0.3) 2px,
+            rgba(34, 139, 34, 0.3) 4px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 8px,
+            rgba(0, 100, 0, 0.2) 8px,
+            rgba(0, 100, 0, 0.2) 12px
+        );
+    background-size: 4px 4px, 12px 12px;
+}
+
+/* Stick Figures */
+.stick-figure {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+#player1 { left: 15%; bottom: 30%; }
+#player2 { left: 25%; bottom: 30%; }
+#player3 { left: 35%; bottom: 30%; }
+#player4 { left: 45%; bottom: 30%; }
+
+.player-label {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: bold;
+    color: #000;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.stick-head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    border: 2px solid #333;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.stick-body {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 25px;
+    background: #333;
+}
+
+.stick-arm-left, .stick-arm-right {
+    position: absolute;
+    top: 18px;
+    width: 2px;
+    height: 15px;
+    background: #333;
+    transform-origin: top center;
+}
+
+.stick-arm-left {
+    left: 15px;
+    transform: translateX(-50%) rotate(-20deg);
+    animation: wave-left 3s ease-in-out infinite;
+}
+
+.stick-arm-right {
+    right: 15px;
+    transform: translateX(50%) rotate(20deg);
+    animation: wave-right 3s ease-in-out infinite;
+}
+
+.stick-leg-left, .stick-leg-right {
+    position: absolute;
+    top: 38px;
+    width: 2px;
+    height: 18px;
+    background: #333;
+    transform-origin: top center;
+}
+
+.stick-leg-left {
+    left: 16px;
+    transform: translateX(-50%) rotate(-10deg);
+    animation: walk-left 1.5s ease-in-out infinite;
+}
+
+.stick-leg-right {
+    right: 16px;
+    transform: translateX(50%) rotate(10deg);
+    animation: walk-right 1.5s ease-in-out infinite;
+}
+
+/* Class-specific stick figure styles */
+.stick-figure.warrior .stick-head {
+    background: #FFD700;
+    border-color: #B8860B;
+}
+
+.stick-figure.archer .stick-head {
+    background: #90EE90;
+    border-color: #228B22;
+}
+
+.stick-figure.mage .stick-head {
+    background: #ADD8E6;
+    border-color: #4169E1;
+}
+
+.stick-figure.priest .stick-head {
+    background: #FFC0CB;
+    border-color: #FF1493;
+}
+
+.stick-figure.boxer .stick-head {
+    background: #F4A460;
+    border-color: #8B4513;
+}
+
+/* Animations */
+@keyframes wave-left {
+    0%, 100% { transform: translateX(-50%) rotate(-20deg); }
+    50% { transform: translateX(-50%) rotate(-30deg); }
+}
+
+@keyframes wave-right {
+    0%, 100% { transform: translateX(50%) rotate(20deg); }
+    50% { transform: translateX(50%) rotate(30deg); }
+}
+
+@keyframes walk-left {
+    0%, 100% { transform: translateX(-50%) rotate(-10deg); }
+    50% { transform: translateX(-50%) rotate(10deg); }
+}
+
+@keyframes walk-right {
+    0%, 100% { transform: translateX(50%) rotate(10deg); }
+    50% { transform: translateX(50%) rotate(-10deg); }
+}
+
+/* Minimap */
+#minimap {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.map-zone {
+    position: absolute;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.map-zone.forest {
+    top: 5px;
+    left: 5px;
+    width: 35px;
+    height: 25px;
+    background: #228B22;
+}
+
+.map-zone.plains {
+    top: 10px;
+    right: 5px;
+    width: 35px;
+    height: 25px;
+    background: #90EE90;
+}
+
+.map-zone.mountains {
+    bottom: 25px;
+    left: 5px;
+    width: 35px;
+    height: 25px;
+    background: #696969;
+}
+
+.map-zone.desert {
+    bottom: 25px;
+    right: 5px;
+    width: 35px;
+    height: 25px;
+    background: #F4A460;
+}
+
+.map-zone.cave {
+    bottom: 5px;
+    right: 15px;
+    width: 25px;
+    height: 15px;
+    background: #2F4F4F;
+}
+
+.map-zone.active {
+    box-shadow: 0 0 5px #FFD700;
+    border: 2px solid #FFD700;
+}
+
+.map-zone:hover {
+    opacity: 0.8;
+}
+
+.player-dot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #FF0000;
+    border-radius: 50%;
+    z-index: 5;
+}
+
+/* Minimap player positions for each zone */
+.map-zone.forest .player-dot:nth-child(1) { top: 2px; left: 3px; }
+.map-zone.forest .player-dot:nth-child(2) { top: 5px; left: 6px; }
+.map-zone.forest .player-dot:nth-child(3) { top: 8px; left: 9px; }
+.map-zone.forest .player-dot:nth-child(4) { top: 11px; left: 12px; }
+
+.map-zone.plains .player-dot:nth-child(1) { top: 3px; left: 15px; }
+.map-zone.plains .player-dot:nth-child(2) { top: 6px; left: 18px; }
+.map-zone.plains .player-dot:nth-child(3) { top: 9px; left: 21px; }
+.map-zone.plains .player-dot:nth-child(4) { top: 12px; left: 24px; }
+
+.map-zone.mountains .player-dot:nth-child(1) { top: 5px; left: 2px; }
+.map-zone.mountains .player-dot:nth-child(2) { top: 8px; left: 5px; }
+.map-zone.mountains .player-dot:nth-child(3) { top: 11px; left: 8px; }
+.map-zone.mountains .player-dot:nth-child(4) { top: 14px; left: 11px; }
+
+.map-zone.desert .player-dot:nth-child(1) { top: 5px; left: 10px; }
+.map-zone.desert .player-dot:nth-child(2) { top: 8px; left: 13px; }
+.map-zone.desert .player-dot:nth-child(3) { top: 11px; left: 16px; }
+.map-zone.desert .player-dot:nth-child(4) { top: 14px; left: 19px; }
+
+.map-zone.cave .player-dot:nth-child(1) { top: 3px; left: 5px; }
+.map-zone.cave .player-dot:nth-child(2) { top: 6px; left: 8px; }
+.map-zone.cave .player-dot:nth-child(3) { top: 9px; left: 11px; }
+.map-zone.cave .player-dot:nth-child(4) { top: 12px; left: 14px; }
+
+/* Debug Controls */
+.debug-controls {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.debug-controls button {
+    padding: 4px 8px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.debug-controls button:hover {
+    background: #45a049;
+}
+
+#debug-output {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 5px;
+    width: 100%;
+    height: 80px;
+    overflow-y: auto;
+    font-size: 9px;
+    font-family: monospace;
+    color: #000;
+}
+
+.debug-line {
+    margin-bottom: 2px;
+    padding: 1px 0;
+}
+
+.debug-line.error {
+    color: #CC0000;
+}
+
+.debug-line.warning {
+    color: #FF6600;
+}
+
+.debug-line.success {
+    color: #006600;
+}
+
+/* Enemy Container */
+#enemy-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.enemy {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 6;
+    transition: all 0.3s ease;
+}
+
+.enemy.slime {
+    background: #00ff00;
+    animation: slime-bounce 2s ease-in-out infinite;
+}
+
+.enemy.rabbit {
+    background: #F5DEB3;
+    animation: rabbit-hop 1.8s ease-in-out infinite;
+}
+
+.enemy.goblin {
+    background: #8B4513;
+    animation: goblin-sway 3s ease-in-out infinite;
+}
+
+.enemy.wolf {
+    background: #696969;
+    animation: wolf-prowl 2.5s ease-in-out infinite;
+}
+
+.enemy.troll {
+    background: #556B2F;
+    width: 25px;
+    height: 25px;
+    animation: troll-stomp 4s ease-in-out infinite;
+}
+
+.enemy.eagle {
+    background: #DAA520;
+    animation: eagle-soar 3s ease-in-out infinite;
+}
+
+.enemy.scorpion {
+    background: #8B4513;
+    animation: scorpion-scuttle 2.5s ease-in-out infinite;
+}
+
+.enemy.mummy {
+    background: #F5F5DC;
+    animation: mummy-shuffle 4s ease-in-out infinite;
+}
+
+.enemy.bat {
+    background: #2F2F2F;
+    animation: bat-flutter 1.5s ease-in-out infinite;
+}
+
+.enemy.spider {
+    background: #000000;
+    animation: spider-crawl 3s ease-in-out infinite;
+}
+
+.enemy-health {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 3px;
+    background: #ff0000;
+    border: 1px solid #000;
+    border-radius: 2px;
+}
+
+.enemy-health-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00);
+    border-radius: 1px;
+    transition: width 0.3s ease;
+}
+
+/* Enemy Animations */
+@keyframes slime-bounce {
+    0%, 100% { transform: translateY(0) scale(1, 1); }
+    50% { transform: translateY(-10px) scale(1.1, 0.9); }
+}
+
+@keyframes rabbit-hop {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(10deg); }
+}
+
+@keyframes goblin-sway {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
+@keyframes wolf-prowl {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+}
+
+@keyframes troll-stomp {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(5deg); }
+}
+
+@keyframes eagle-soar {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-5px) rotate(5deg); }
+}
+
+@keyframes scorpion-scuttle {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-3px) rotate(-10deg); }
+    75% { transform: translateX(3px) rotate(10deg); }
+}
+
+@keyframes mummy-shuffle {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(2px); }
+}
+
+@keyframes bat-flutter {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-5px) scale(0.9); }
+}
+
+@keyframes spider-crawl {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg); }
+    75% { transform: rotate(-10deg); }
+}
+
+/* Fullscreen Map Modal */
+.map-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.map-modal.active {
+    display: flex;
+}
+
+.map-container {
+    position: relative;
+    background: #2c3e50;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 600px;
+}
+
+#close-map {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#close-map:hover {
+    background: #cc0000;
+}
+
+.map-regions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.map-region {
+    background: linear-gradient(135deg, #34495e, #3498db);
+    border: 3px solid #ecf0f1;
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    min-height: 120px;
+}
+
+.map-region:hover {
+    transform: scale(1.05);
+    border-color: #f39c12;
+}
+
+.map-region.active-region {
+    border-color: #f39c12;
+    background: linear-gradient(135deg, #e67e22, #f39c12);
+    box-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
+}
+
+.map-region h4 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.map-region p {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+.region-players {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.map-player-icon {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Player Health Bars */
+.player-health-bar {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.player-health-fill {
+    height: 100%;
+    background: #4CAF50;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .game-container {
+        grid-template-rows: 1.5fr auto 1fr;
+    }
+    
+    .top-row {
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 800px) {
+    .game-container {
+        grid-template-rows: 1fr auto 1fr;
+    }
+    
+    .top-row {
+        grid-template-columns: 1fr;
+        grid-template-rows: 2fr 1fr 1fr;
+    }
+    
+    .bottom-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+    }
+    
+    .map-regions {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stick Ranger</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Top Row -->
+        <div class="top-row">
+            <!-- Main Game Box -->
+            <div class="game-box">
+                <div class="grass-floor"></div>
+                
+                <!-- Stick Figures -->
+                <div class="stick-figure" id="player1">
+                    <div class="player-label">P1</div>
+                    <div class="stick-head"></div>
+                    <div class="stick-body"></div>
+                    <div class="stick-arm-left"></div>
+                    <div class="stick-arm-right"></div>
+                    <div class="stick-leg-left"></div>
+                    <div class="stick-leg-right"></div>
+                </div>
+                
+                <div class="stick-figure" id="player2">
+                    <div class="player-label">P2</div>
+                    <div class="stick-head"></div>
+                    <div class="stick-body"></div>
+                    <div class="stick-arm-left"></div>
+                    <div class="stick-arm-right"></div>
+                    <div class="stick-leg-left"></div>
+                    <div class="stick-leg-right"></div>
+                </div>
+                
+                <div class="stick-figure" id="player3">
+                    <div class="player-label">P3</div>
+                    <div class="stick-head"></div>
+                    <div class="stick-body"></div>
+                    <div class="stick-arm-left"></div>
+                    <div class="stick-arm-right"></div>
+                    <div class="stick-leg-left"></div>
+                    <div class="stick-leg-right"></div>
+                </div>
+                
+                <div class="stick-figure" id="player4">
+                    <div class="player-label">P4</div>
+                    <div class="stick-head"></div>
+                    <div class="stick-body"></div>
+                    <div class="stick-arm-left"></div>
+                    <div class="stick-arm-right"></div>
+                    <div class="stick-leg-left"></div>
+                    <div class="stick-leg-right"></div>
+                </div>
+
+                <!-- Enemy Container -->
+                <div class="enemy-container" id="enemy-container"></div>
+            </div>
+            
+            
+            <!-- Map Box -->
+            <div class="map-box">
+                <h3>Map</h3>
+                <div class="minimap" id="minimap">
+                    <div class="minimap-content">
+                        <div class="map-zone forest">Forest</div>
+                        <div class="map-zone plains active">Plains</div>
+                        <div class="map-zone mountains">Mountains</div>
+                        <div class="map-zone desert">Desert</div>
+                        <div class="map-zone cave">Cave</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Debug Box -->
+            <div class="debug-box">
+                <h3>Debug</h3>
+                <div class="debug-controls">
+                    <button id="clear-debug">Clear</button>
+                    <button id="toggle-debug">Toggle</button>
+                </div>
+                <div class="debug-output" id="debug-output">
+                    <div class="debug-line">Debug console initialized...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Second Row -->
+        <div class="second-row">
+            <!-- Auto Battle Box -->
+            <div class="auto-battle-box">
+                <h3>Auto Battle</h3>
+                <div class="combat-ui" id="combat-ui">
+                    <button id="auto-battle-btn">Auto Battle: OFF</button>
+                    <div class="combat-log" id="combat-log">
+                        <div>Combat ready...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Row -->
+        <div class="bottom-row">
+            <!-- Player Cards -->
+            <div class="player-card">
+                <!-- Tab Buttons -->
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-tab="class">Class</button>
+                    <button class="tab-btn" data-tab="equipment">Equipment</button>
+                </div>
+                
+                <!-- Class Selection Tab -->
+                <div class="tab-content class-tab active">
+                    <select class="class-select" title="Select player class">
+                        <option value="Warrior">Warrior</option>
+                        <option value="Archer">Archer</option>
+                        <option value="Mage">Mage</option>
+                        <option value="Priest">Priest</option>
+                        <option value="Boxer">Boxer</option>
+                    </select>
+                    <button class="apply-btn">Apply</button>
+                    <div class="player-class">Warrior</div>
+                    <div class="player-level">Level: 1</div>
+                    <div class="player-stats">
+                        <div>HP: <span class="stat-value" data-stat="hp">100</span></div>
+                        <div>ATK: <span class="stat-value" data-stat="atk">10</span></div>
+                        <div>DEF: <span class="stat-value" data-stat="def">5</span></div>
+                        <div>SPD: <span class="stat-value" data-stat="spd">3</span></div>
+                        <div>RANGE: <span class="stat-value" data-stat="range">8</span></div>
+                    </div>
+                </div>
+                
+                <!-- Equipment Tab -->
+                <div class="tab-content equipment-tab">
+                    <div class="equipment-grid">
+                        <div class="equipment-slot" data-slot="weapon">
+                            <div class="slot-label">Weapon</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="armor">
+                            <div class="slot-label">Armor</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="accessory">
+                            <div class="slot-label">Accessory</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="boots">
+                            <div class="slot-label">Boots</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                    </div>
+                    <div class="equipment-stats">
+                        <div>Bonus ATK: <span class="bonus-stat" data-bonus="atk">+0</span></div>
+                        <div>Bonus DEF: <span class="bonus-stat" data-bonus="def">+0</span></div>
+                        <div>Bonus SPD: <span class="bonus-stat" data-bonus="spd">+0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="player-card">
+                <!-- Tab Buttons -->
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-tab="class">Class</button>
+                    <button class="tab-btn" data-tab="equipment">Equipment</button>
+                </div>
+                
+                <!-- Class Selection Tab -->
+                <div class="tab-content class-tab active">
+                    <select class="class-select" title="Select player class">
+                        <option value="Warrior">Warrior</option>
+                        <option value="Archer" selected>Archer</option>
+                        <option value="Mage">Mage</option>
+                        <option value="Priest">Priest</option>
+                        <option value="Boxer">Boxer</option>
+                    </select>
+                    <button class="apply-btn">Apply</button>
+                    <div class="player-class">Archer</div>
+                    <div class="player-level">Level: 1</div>
+                    <div class="player-stats">
+                        <div>HP: <span class="stat-value" data-stat="hp">80</span></div>
+                        <div>ATK: <span class="stat-value" data-stat="atk">15</span></div>
+                        <div>DEF: <span class="stat-value" data-stat="def">3</span></div>
+                        <div>SPD: <span class="stat-value" data-stat="spd">5</span></div>
+                        <div>RANGE: <span class="stat-value" data-stat="range">12</span></div>
+                    </div>
+                </div>
+                
+                <!-- Equipment Tab -->
+                <div class="tab-content equipment-tab">
+                    <div class="equipment-grid">
+                        <div class="equipment-slot" data-slot="weapon">
+                            <div class="slot-label">Weapon</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="armor">
+                            <div class="slot-label">Armor</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="accessory">
+                            <div class="slot-label">Accessory</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="boots">
+                            <div class="slot-label">Boots</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                    </div>
+                    <div class="equipment-stats">
+                        <div>Bonus ATK: <span class="bonus-stat" data-bonus="atk">+0</span></div>
+                        <div>Bonus DEF: <span class="bonus-stat" data-bonus="def">+0</span></div>
+                        <div>Bonus SPD: <span class="bonus-stat" data-bonus="spd">+0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="player-card">
+                <!-- Tab Buttons -->
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-tab="class">Class</button>
+                    <button class="tab-btn" data-tab="equipment">Equipment</button>
+                </div>
+                
+                <!-- Class Selection Tab -->
+                <div class="tab-content class-tab active">
+                    <select class="class-select" title="Select player class">
+                        <option value="Warrior">Warrior</option>
+                        <option value="Archer">Archer</option>
+                        <option value="Mage" selected>Mage</option>
+                        <option value="Priest">Priest</option>
+                        <option value="Boxer">Boxer</option>
+                    </select>
+                    <button class="apply-btn">Apply</button>
+                    <div class="player-class">Mage</div>
+                    <div class="player-level">Level: 1</div>
+                    <div class="player-stats">
+                        <div>HP: <span class="stat-value" data-stat="hp">70</span></div>
+                        <div>ATK: <span class="stat-value" data-stat="atk">20</span></div>
+                        <div>DEF: <span class="stat-value" data-stat="def">2</span></div>
+                        <div>SPD: <span class="stat-value" data-stat="spd">4</span></div>
+                        <div>RANGE: <span class="stat-value" data-stat="range">15</span></div>
+                    </div>
+                </div>
+                
+                <!-- Equipment Tab -->
+                <div class="tab-content equipment-tab">
+                    <div class="equipment-grid">
+                        <div class="equipment-slot" data-slot="weapon">
+                            <div class="slot-label">Weapon</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="armor">
+                            <div class="slot-label">Armor</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="accessory">
+                            <div class="slot-label">Accessory</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="boots">
+                            <div class="slot-label">Boots</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                    </div>
+                    <div class="equipment-stats">
+                        <div>Bonus ATK: <span class="bonus-stat" data-bonus="atk">+0</span></div>
+                        <div>Bonus DEF: <span class="bonus-stat" data-bonus="def">+0</span></div>
+                        <div>Bonus SPD: <span class="bonus-stat" data-bonus="spd">+0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="player-card">
+                <!-- Tab Buttons -->
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-tab="class">Class</button>
+                    <button class="tab-btn" data-tab="equipment">Equipment</button>
+                </div>
+                
+                <!-- Class Selection Tab -->
+                <div class="tab-content class-tab active">
+                    <select class="class-select" title="Select player class">
+                        <option value="Warrior">Warrior</option>
+                        <option value="Archer">Archer</option>
+                        <option value="Mage">Mage</option>
+                        <option value="Priest" selected>Priest</option>
+                        <option value="Boxer">Boxer</option>
+                    </select>
+                    <button class="apply-btn">Apply</button>
+                    <div class="player-class">Priest</div>
+                    <div class="player-level">Level: 1</div>
+                    <div class="player-stats">
+                        <div>HP: <span class="stat-value" data-stat="hp">90</span></div>
+                        <div>ATK: <span class="stat-value" data-stat="atk">Heal: 12</span></div>
+                        <div>DEF: <span class="stat-value" data-stat="def">6</span></div>
+                        <div>SPD: <span class="stat-value" data-stat="spd">3</span></div>
+                        <div>RANGE: <span class="stat-value" data-stat="range">10</span></div>
+                    </div>
+                </div>
+                
+                <!-- Equipment Tab -->
+                <div class="tab-content equipment-tab">
+                    <div class="equipment-grid">
+                        <div class="equipment-slot" data-slot="weapon">
+                            <div class="slot-label">Weapon</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="armor">
+                            <div class="slot-label">Armor</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="accessory">
+                            <div class="slot-label">Accessory</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                        <div class="equipment-slot" data-slot="boots">
+                            <div class="slot-label">Boots</div>
+                            <div class="slot-item">None</div>
+                        </div>
+                    </div>
+                    <div class="equipment-stats">
+                        <div>Bonus ATK: <span class="bonus-stat" data-bonus="atk">+0</span></div>
+                        <div>Bonus DEF: <span class="bonus-stat" data-bonus="def">+0</span></div>
+                        <div>Bonus SPD: <span class="bonus-stat" data-bonus="spd">+0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Large Inventory -->
+            <div class="inventory">
+                <h3>Inventory</h3>
+                <div class="inventory-grid">
+                    <div class="inv-slot">1</div>
+                    <div class="inv-slot">2</div>
+                    <div class="inv-slot">3</div>
+                    <div class="inv-slot">4</div>
+                    <div class="inv-slot">5</div>
+                    <div class="inv-slot">6</div>
+                    <div class="inv-slot">7</div>
+                    <div class="inv-slot">8</div>
+                    <div class="inv-slot">9</div>
+                    <div class="inv-slot">10</div>
+                    <div class="inv-slot">11</div>
+                    <div class="inv-slot">12</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Screen Map Overlay -->
+    <div class="fullscreen-map" id="fullscreen-map">
+        <div class="map-header">
+            <h2>World Map</h2>
+            <button class="close-map" id="close-map">×</button>
+        </div>
+        <div class="map-container">
+            <div class="map-region forest-region" data-zone="forest">
+                <div class="region-name">🌲 Mystic Forest</div>
+                <div class="region-info">Level: 1-5</div>
+                <div class="region-enemies">
+                    <span class="enemy-icon goblin" title="Goblin">🟩</span> Goblin
+                    <span class="enemy-icon slime" title="Slime">🟢</span> Slime
+                </div>
+                <div class="region-players"></div>
+            </div>
+            <div class="map-region plains-region active" data-zone="plains">
+                <div class="region-name">🌾 Golden Plains</div>
+                <div class="region-info">Level: 3-8</div>
+                <div class="region-enemies">
+                    <span class="enemy-icon wolf" title="Wolf">🐺</span> Wolf
+                    <span class="enemy-icon rabbit" title="Rabbit">🐰</span> Rabbit
+                </div>
+                <div class="region-players"></div>
+            </div>
+            <div class="map-region mountains-region" data-zone="mountains">
+                <div class="region-name">⛰️ Iron Mountains</div>
+                <div class="region-info">Level: 6-12</div>
+                <div class="region-enemies">
+                    <span class="enemy-icon orc" title="Orc">👹</span> Orc
+                    <span class="enemy-icon golem" title="Golem">🗿</span> Golem
+                </div>
+                <div class="region-players"></div>
+            </div>
+            <div class="map-region desert-region" data-zone="desert">
+                <div class="region-name">🏜️ Burning Desert</div>
+                <div class="region-info">Level: 10-16</div>
+                <div class="region-enemies">
+                    <span class="enemy-icon scorpion" title="Scorpion">🦂</span> Scorpion
+                    <span class="enemy-icon snake" title="Snake">🐍</span> Snake
+                </div>
+                <div class="region-players"></div>
+            </div>
+            <div class="map-region cave-region" data-zone="cave">
+                <div class="region-name">🕳️ Dark Cave</div>
+                <div class="region-info">Level: 15-20</div>
+                <div class="region-enemies">
+                    <span class="enemy-icon bat" title="Bat">🦇</span> Bat
+                    <span class="enemy-icon spider" title="Spider">🕷️</span> Spider
+                </div>
+                <div class="region-players"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
