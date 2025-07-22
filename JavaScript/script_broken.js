@@ -1,3 +1,8 @@
+
+
+
+
+
 // Player class stats
 const classStats = {
     Warrior: { HP: 100, ATK: 10, DEF: 5, SPD: 3, RANGE: 3 },
@@ -9,7 +14,7 @@ const classStats = {
 
 // Test that script is loading
 console.log('Script loaded! Class stats:', classStats);
-// alert('Script is working! Check console for debug info.'); // Removed for cleaner UX
+alert('Script is working! Check console for debug info.');
 
 // Debug system
 let debugEnabled = true;
@@ -30,11 +35,13 @@ function debugLog(message, type = 'info') {
     console.log(`[DEBUG] ${message}`);
 }
 
+
 function clearDebug() {
     if (debugOutput) {
         debugOutput.innerHTML = '<div class="debug-line">Debug console cleared...</div>';
     }
 }
+
 
 function updatePlayerCard(card, className) {
     const stats = classStats[className];
@@ -98,6 +105,7 @@ function updatePlayerCard(card, className) {
     }
 }
 
+
 function updateStickFigure(card, className, stats) {
     // Find which player this is (1-4)
     const playerCards = document.querySelectorAll('.player-card');
@@ -108,42 +116,35 @@ function updateStickFigure(card, className, stats) {
             playerIndex = index + 1;
         }
     });
-    
     if (playerIndex === -1) {
         debugLog('ERROR: Could not find player index for stick figure update', 'error');
         return;
     }
-    
     const stickFigure = document.getElementById(`player${playerIndex}`);
     if (!stickFigure) {
         debugLog(`ERROR: Could not find stick figure for player ${playerIndex}`, 'error');
         return;
     }
-    
     debugLog(`Updating stick figure for player ${playerIndex} with class ${className}`, 'info');
-    
     // Remove all previous class styling
     stickFigure.classList.remove('warrior', 'archer', 'mage', 'priest', 'boxer');
     stickFigure.classList.remove('warrior-style', 'archer-style', 'mage-style', 'priest-style', 'boxer-style');
-    
     // Add class-specific styling
     if (className && className !== 'None') {
         const classLower = className.toLowerCase();
         stickFigure.classList.add(classLower);
         debugLog(`Added class: ${classLower}`, 'info');
     }
-    
     // Apply speed-based animation speed
     const animationSpeed = Math.max(0.5, 2 - (stats.SPD * 0.02));
     stickFigure.style.animationDuration = `${animationSpeed}s`;
-    
     // Apply size based on overall stats (bigger = stronger overall)
     const totalStats = (stats.HP + stats.ATK + stats.DEF + stats.SPD + stats.RANGE) / 5;
     const scale = 0.8 + (totalStats / 150);
     stickFigure.style.transform = `scale(${scale})`;
-    
     debugLog(`Stick figure updated: ${className} with scale ${scale.toFixed(2)} and animation speed ${animationSpeed.toFixed(1)}s`, 'success');
 }
+
 
 // Map functionality
 function initializeMap() {
@@ -291,11 +292,14 @@ function movePlayersToRegion(zoneName) {
 }
 
 // Combat System
+
 let currentZone = 'plains';
 let enemies = [];
 let combatActive = false;
 let autoBattleEnabled = false;
 let battleLoopInterval = null;
+let gameLevel = 1;
+let enemyStatMultiplier = 1;
 
 const enemyData = {
     plains: [
@@ -323,34 +327,40 @@ const enemyData = {
 function spawnEnemies(zoneName) {
     clearEnemies();
     currentZone = zoneName;
-    
     const zoneEnemies = enemyData[zoneName] || enemyData.plains;
     const container = document.getElementById('enemy-container');
-    
     enemies = [];
-    
     zoneEnemies.forEach(enemyType => {
         const count = Math.floor(Math.random() * (enemyType.count[1] - enemyType.count[0] + 1)) + enemyType.count[0];
-        
         for (let i = 0; i < count; i++) {
-            const enemy = createEnemy(enemyType);
+            // Scale enemy stats by multiplier
+            const scaledType = Object.assign({}, enemyType);
+            scaledType.hp = Math.round(enemyType.hp * enemyStatMultiplier);
+            scaledType.atk = Math.round(enemyType.atk * enemyStatMultiplier);
+            scaledType.def = Math.round(enemyType.def * enemyStatMultiplier);
+            scaledType.spd = Math.round(enemyType.spd * Math.max(1, enemyStatMultiplier * 0.9));
+            scaledType.range = Math.round(enemyType.range * Math.max(1, enemyStatMultiplier * 0.9));
+            // Place enemies on the right side
+            scaledType._startX = 80 + Math.random() * 10; // 80-90% right
+            scaledType._startY = 30 + Math.random() * 30; // 30-60% vertical
+            const enemy = createEnemy(scaledType);
+            enemy.x = scaledType._startX;
+            enemy.y = scaledType._startY;
             enemies.push(enemy);
             container.appendChild(enemy.element);
         }
     });
-    
-    debugLog(`Spawned ${enemies.length} enemies in ${zoneName}`, 'info');
-    addCombatLog(`Entered ${zoneName} - ${enemies.length} enemies spotted!`);
+    debugLog(`Spawned ${enemies.length} enemies in ${zoneName} (Level ${gameLevel}, Multiplier ${enemyStatMultiplier.toFixed(2)})`, 'info');
+    addCombatLog(`Entered ${zoneName} - ${enemies.length} enemies spotted! (Level ${gameLevel})`);
 }
 
 function createEnemy(enemyData) {
     const element = document.createElement('div');
     element.className = `enemy ${enemyData.type}`;
     
-    // Random position in game area
-    const gameBox = document.querySelector('.game-box');
-    const x = Math.random() * 80 + 10; // 10-90% to avoid edges
-    const y = Math.random() * 40 + 20; // 20-60% to stay above grass
+    // Use start position if provided, otherwise default
+    const x = enemyData._startX || (Math.random() * 80 + 10);
+    const y = enemyData._startY || (Math.random() * 40 + 20);
     
     element.style.left = x + '%';
     element.style.top = y + '%';
@@ -377,7 +387,9 @@ function createEnemy(enemyData) {
         x: x,
         y: y,
         target: null,
-        lastAttack: 0
+        lastAttack: 0,
+        moveDirection: Math.random() * Math.PI * 2, // Random initial direction
+        idleTime: 0
     };
     
     return enemy;
@@ -581,21 +593,22 @@ function stopBattleLoop() {
 }
 
 function processCombatTurn() {
-    // Simple combat logic - enemies move towards players, attack if in range
+    // Players start on the left, enemies on the right, both move toward each other
     const playerElements = document.querySelectorAll('.stick-figure');
     const playerPositions = [];
-    
     // Get player positions
     playerElements.forEach((element, index) => {
-        const rect = element.getBoundingClientRect();
-        const gameBoxRect = document.querySelector('.game-box').getBoundingClientRect();
-        
         const stats = getPlayerStats(index + 1);
         if (!stats) return;
-        
+        // Place players on the left side at start
+        if (!element._initialized) {
+            element._initialized = true;
+            element._x = 10 + index * 5; // 10, 15, 20, 25% left
+            element._y = 40 + index * 5; // 40, 45, 50, 55% vertical
+        }
         playerPositions.push({
-            x: ((rect.left - gameBoxRect.left) / gameBoxRect.width) * 100,
-            y: ((rect.top - gameBoxRect.top) / gameBoxRect.height) * 100,
+            x: element._x,
+            y: element._y,
             element: element,
             stats: stats,
             hp: stats.hp,
@@ -605,136 +618,158 @@ function processCombatTurn() {
         });
     });
     
-    // Process player attacks first
+    // Move players toward nearest enemy (or Priest toward damaged player)
     playerPositions.forEach(player => {
         if (player.hp <= 0) return;
         
-        const now = Date.now();
-        const attackCooldown = 3000 - (player.stats.spd * 100); // Faster speed = faster attacks
+        // Update player visual position
+        player.element.style.left = player.x + '%';
+        player.element.style.top = player.y + '%';
         
-        if (now - player.lastAttack > attackCooldown) {
-            // Find enemies in range
-            const rangeThreshold = player.stats.range * 3; // Scale range appropriately
-            
+        // Priest moves toward most damaged player
+        if (player.stats.className === 'Priest' && player.stats.heal > 0) {
+            healNearbyPlayers(player, playerPositions);
+        } else {
+            // Move toward nearest enemy like Stick Ranger
+            let nearestEnemy = null;
+            let nearestDistance = Infinity;
+    playerPositions.forEach(player => {
+        if (player.hp <= 0) return;
+        // Update player visual position
+        player.element.style.left = player.x + '%';
+        player.element.style.top = player.y + '%';
+        // Priest only heals, never attacks
+        if (player.stats.className === 'Priest' && player.stats.heal > 0) {
+            healNearbyPlayersInfiniteRange(player, playerPositions);
+        } else {
+            let nearestEnemy = null;
+            let nearestDistance = Infinity;
             enemies.forEach(enemy => {
                 if (enemy.hp <= 0) return;
-                
                 const distance = calculateDistance(player, enemy);
-                if (distance <= rangeThreshold) {
-                    // Player attacks enemy
-                    if (player.stats.className === 'Priest' && player.stats.heal > 0) {
-                        // Priest heals instead of attacking
-                        healNearbyPlayers(player, playerPositions);
-                    } else {
-                        const damage = Math.max(1, player.stats.atk - enemy.def);
-                        enemy.hp = Math.max(0, enemy.hp - damage);
-                        
-                        updateEnemyHealth(enemy);
-                        addCombatLog(`Player ${player.index} (${player.stats.className}) attacks ${enemy.name} for ${damage} damage!`);
-                        
-                        if (enemy.hp <= 0) {
-                            addCombatLog(`${enemy.name} defeated!`);
-                            enemy.element.style.opacity = '0.3';
-                            enemy.element.style.pointerEvents = 'none';
-                        }
-                    }
-                    
-                    player.element.lastAttack = now;
-                    player.lastAttack = now;
-                    return; // Attack only one enemy per turn
-                }
-            });
-        }
-    });
-    
-    // Process each enemy
-    enemies.forEach(enemy => {
-        if (enemy.hp <= 0) return;
-        
-        // Find nearest living player
-        let nearestPlayer = null;
-        let nearestDistance = Infinity;
-        
-        playerPositions.forEach(player => {
-            if (player.stats && player.hp > 0) {
-                const distance = calculateDistance(enemy, player);
                 if (distance < nearestDistance) {
                     nearestDistance = distance;
-                    nearestPlayer = player;
+                    nearestEnemy = enemy;
                 }
-            }
-        });
-        
-        if (nearestPlayer) {
-            // Move towards player if not in range
-            const rangeThreshold = enemy.range * 4; // Scale range appropriately
-            
-            if (nearestDistance > rangeThreshold) {
-                const newPos = moveTowards(enemy, nearestPlayer, enemy.spd * 0.8);
-                enemy.x = Math.max(5, Math.min(95, newPos.x)); // Keep within bounds
-                enemy.y = Math.max(10, Math.min(70, newPos.y)); // Keep above grass
-                updateEnemyPosition(enemy);
-            } else {
-                // Attack if in range and enough time has passed
-                const now = Date.now();
-                const attackCooldown = 2500 - (enemy.spd * 50);
-                
-                if (now - enemy.lastAttack > attackCooldown) {
-                    const damage = Math.max(1, enemy.atk - (nearestPlayer.stats.def || 0));
-                    nearestPlayer.hp = Math.max(0, nearestPlayer.hp - damage);
-                    
-                    updatePlayerHealth(nearestPlayer.index, nearestPlayer.hp, nearestPlayer.maxHp);
-                    addCombatLog(`${enemy.name} attacks Player ${nearestPlayer.index} for ${damage} damage!`);
-                    
-                    if (nearestPlayer.hp <= 0) {
-                        addCombatLog(`Player ${nearestPlayer.index} defeated!`);
-                        nearestPlayer.element.style.opacity = '0.5';
+            });
+            if (nearestEnemy) {
+                const rangeThreshold = player.stats.range * 2.5;
+                if (nearestDistance > rangeThreshold) {
+                    const moveSpeed = player.stats.spd * 0.8;
+                    const newPos = moveTowards(player, nearestEnemy, moveSpeed);
+                    player.x = Math.max(5, Math.min(95, newPos.x));
+                    player.y = Math.max(15, Math.min(75, newPos.y));
+                    player.element._x = player.x;
+                    player.element._y = player.y;
+                } else {
+                    const now = Date.now();
+                    const attackCooldown = 2000 - (player.stats.spd * 50);
+                    if (now - player.lastAttack > attackCooldown) {
+                        const damage = Math.max(1, player.stats.atk - nearestEnemy.def);
+                        nearestEnemy.hp = Math.max(0, nearestEnemy.hp - damage);
+                        updateEnemyHealth(nearestEnemy);
+                        addCombatLog(`Player ${player.index} (${player.stats.className}) attacks ${nearestEnemy.name} for ${damage} damage!`);
+                        if (nearestEnemy.hp <= 0) {
+                            addCombatLog(`${nearestEnemy.name} defeated!`);
+                            nearestEnemy.element.style.opacity = '0.3';
+                            nearestEnemy.element.style.pointerEvents = 'none';
+                        }
+                        player.element.lastAttack = now;
+                        player.lastAttack = now;
                     }
-                    
-                    enemy.lastAttack = now;
                 }
             }
         }
     });
-    
-    // Check for victory condition
-    const aliveEnemies = enemies.filter(e => e.hp > 0).length;
-    const alivePlayers = playerPositions.filter(p => p.hp > 0).length;
-    
-    if (aliveEnemies === 0) {
-        addCombatLog('Victory! All enemies defeated!');
-        setTimeout(() => {
-            spawnEnemies(currentZone); // Respawn enemies
-        }, 3000);
-    } else if (alivePlayers === 0) {
-        addCombatLog('Defeat! All players have fallen!');
-        stopBattleLoop();
-        autoBattleEnabled = false;
-        document.getElementById('auto-battle-btn').classList.remove('active');
-        document.getElementById('auto-battle-btn').textContent = 'Auto Battle: OFF';
+}
+function healNearbyPlayersInfiniteRange(priest, playerPositions) {
+    let healed = false;
+    // Find most damaged player (lowest HP, not self, not dead)
+    let target = null;
+    let minHpRatio = 1;
+    for (let i = 0; i < playerPositions.length; i++) {
+        const player = playerPositions[i];
+        if (player.index === priest.index) continue;
+        if (player.hp <= 0) continue;
+        const hpRatio = player.hp / player.maxHp;
+        if (hpRatio < minHpRatio) {
+            minHpRatio = hpRatio;
+            target = player;
+        }
+    }
+    if (target) {
+        // Heal at infinite range
+        const healAmount = priest.stats.heal;
+        const oldHp = target.hp;
+        let newHp = Math.min(target.maxHp, target.hp + healAmount);
+        target.hp = newHp;
+        // Update the player's HP in the actual player card
+        const playerCard = document.querySelectorAll('.player-card')[target.index - 1];
+        if (playerCard) {
+            const hpSpan = playerCard.querySelector('.stat-value[data-stat="hp"]');
+            if (hpSpan) {
+                hpSpan.textContent = newHp;
+            }
+        }
+        updatePlayerHealth(target.index, newHp, target.maxHp);
+        addCombatLog(`Priest heals Player ${target.index} for ${newHp - oldHp} HP!`);
+        healed = true;
+    }
+    if (!healed) {
+        addCombatLog('Priest finds no one to heal nearby.');
     }
 }
 
 function healNearbyPlayers(priest, playerPositions) {
+    // Priest actively moves toward the most damaged player until in healing range
     const healRange = priest.stats.range * 3;
     let healed = false;
-    
+    // Find most damaged player (lowest HP, not self, not dead)
+    let target = null;
+    let minHpRatio = 1;
     playerPositions.forEach(player => {
-        if (player.index === priest.index) return; // Don't heal self
-        if (player.hp >= player.maxHp) return; // Already at full health
-        
-        const distance = calculateDistance(priest, player);
-        if (distance <= healRange) {
-            const healAmount = priest.stats.heal;
-            const oldHp = player.hp;
-            player.hp = Math.min(player.maxHp, player.hp + healAmount);
-            
-            updatePlayerHealth(player.index, player.hp, player.maxHp);
-            addCombatLog(`Priest heals Player ${player.index} for ${player.hp - oldHp} HP!`);
-            healed = true;
+        if (player.index === priest.index) return;
+        if (player.hp <= 0) return;
+        const hpRatio = player.hp / player.maxHp;
+        if (hpRatio < minHpRatio) {
+            minHpRatio = hpRatio;
+            target = player;
         }
     });
-    
+    if (target) {
+        // Move priest toward target every tick until in healing range
+        let distance = calculateDistance(priest, target);
+        const healRange = priest.stats.range * 4;
+        if (distance > healRange) {
+            const moveSpeed = priest.stats.spd * 2.0;
+            const newPos = moveTowards(priest, target, moveSpeed);
+            priest.x = Math.max(5, Math.min(95, newPos.x));
+            priest.y = Math.max(15, Math.min(75, newPos.y));
+            priest.element._x = priest.x;
+            priest.element._y = priest.y;
+            priest.element.style.left = priest.x + '%';
+            priest.element.style.top = priest.y + '%';
+        }
+        distance = calculateDistance(priest, target);
+        // Heal if in range
+        if (distance <= healRange) {
+            const healAmount = priest.stats.heal;
+            const oldHp = target.hp;
+            let newHp = Math.min(target.maxHp, target.hp + healAmount);
+            target.hp = newHp;
+            // Update the player's HP in the actual player card
+            const playerCard = document.querySelectorAll('.player-card')[target.index - 1];
+            if (playerCard) {
+                const hpSpan = playerCard.querySelector('.stat-value[data-stat="hp"]');
+                if (hpSpan) {
+                    hpSpan.textContent = newHp;
+                }
+            }
+            updatePlayerHealth(target.index, newHp, target.maxHp);
+            addCombatLog(`Priest heals Player ${target.index} for ${newHp - oldHp} HP!`);
+            healed = true;
+        }
+    }
     if (!healed) {
         addCombatLog('Priest finds no one to heal nearby.');
     }
@@ -812,4 +847,129 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     debugLog('All player cards initialized!', 'success');
+    
+    // Initialize equipment tab system
+    initializeEquipmentTabs();
 });
+
+// Equipment Tab System
+function initializeEquipmentTabs() {
+    const playerCards = document.querySelectorAll('.player-card');
+    
+    playerCards.forEach((card, index) => {
+        const classTabs = card.querySelectorAll('.tab-btn');
+        const tabContents = card.querySelectorAll('.tab-content');
+        
+        if (classTabs.length === 0) {
+            debugLog(`Card ${index + 1}: No equipment tabs found`, 'warning');
+            return;
+        }
+        
+        classTabs.forEach((tab, tabIndex) => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                classTabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                if (tabContents[tabIndex]) {
+                    tabContents[tabIndex].classList.add('active');
+                }
+                
+                const tabName = tab.textContent.trim();
+                debugLog(`Player ${index + 1}: Switched to ${tabName} tab`, 'info');
+            });
+        });
+        
+        // Set default active tab (Class tab)
+        if (classTabs[0]) {
+            classTabs[0].classList.add('active');
+        }
+        if (tabContents[0]) {
+            tabContents[0].classList.add('active');
+        }
+        
+        debugLog(`Player ${index + 1}: Equipment tabs initialized`, 'success');
+    });
+    
+    debugLog('Equipment tab system initialized for all players', 'success');
+}
+
+
+
+
+// Equipment Data Structure
+const equipmentData = {
+    weapons: [
+        { id: 'sword', name: 'Iron Sword', atk: 10, def: 0, spd: 0, hp: 0, range: 1 },
+        { id: 'bow', name: 'Wooden Bow', atk: 8, def: 0, spd: 2, hp: 0, range: 3 },
+        { id: 'staff', name: 'Magic Staff', atk: 6, def: 0, spd: 1, hp: 0, range: 2 }
+    ],
+    armor: [
+        { id: 'leather', name: 'Leather Armor', atk: 0, def: 5, spd: 0, hp: 10, range: 0 },
+        { id: 'chain', name: 'Chain Mail', atk: 0, def: 8, spd: -1, hp: 15, range: 0 },
+        { id: 'plate', name: 'Plate Armor', atk: 0, def: 12, spd: -2, hp: 20, range: 0 }
+    ],
+    accessories: [
+        { id: 'ring', name: 'Power Ring', atk: 3, def: 0, spd: 0, hp: 0, range: 0 },
+        { id: 'amulet', name: 'Health Amulet', atk: 0, def: 2, spd: 0, hp: 15, range: 0 },
+        { id: 'cloak', name: 'Speed Cloak', atk: 0, def: 0, spd: 3, hp: 0, range: 0 }
+    ],
+    boots: [
+        { id: 'leather_boots', name: 'Leather Boots', atk: 0, def: 1, spd: 2, hp: 0, range: 0 },
+        { id: 'iron_boots', name: 'Iron Boots', atk: 0, def: 3, spd: 1, hp: 5, range: 0 },
+        { id: 'magic_boots', name: 'Magic Boots', atk: 1, def: 1, spd: 3, hp: 0, range: 0 }
+    ]
+};
+
+// Player equipment storage
+let playerEquipment = {
+    1: { weapon: null, armor: null, accessory: null, boots: null },
+    2: { weapon: null, armor: null, accessory: null, boots: null },
+    3: { weapon: null, armor: null, accessory: null, boots: null },
+    4: { weapon: null, armor: null, accessory: null, boots: null }
+};
+
+function calculateEquipmentBonus(playerIndex) {
+    const equipment = playerEquipment[playerIndex];
+    let bonus = { atk: 0, def: 0, spd: 0, hp: 0, range: 0 };
+    
+    Object.values(equipment).forEach(item => {
+        if (item) {
+            bonus.atk += item.atk || 0;
+            bonus.def += item.def || 0;
+            bonus.spd += item.spd || 0;
+            bonus.hp += item.hp || 0;
+            bonus.range += item.range || 0;
+        }
+    });
+    
+    return bonus;
+}
+
+function updateEquipmentStats(playerIndex) {
+    const playerCard = document.querySelectorAll('.player-card')[playerIndex - 1];
+    if (!playerCard) return;
+    
+    const equipmentStats = playerCard.querySelector('.equipment-stats');
+    if (!equipmentStats) return;
+    
+    const bonus = calculateEquipmentBonus(playerIndex);
+    
+    equipmentStats.innerHTML = `
+        <div>ATK: +${bonus.atk}</div>
+        <div>DEF: +${bonus.def}</div>
+        <div>SPD: +${bonus.spd}</div>
+        <div>HP: +${bonus.hp}</div>
+        <div>RNG: +${bonus.range}</div>
+    `;
+    
+    debugLog(`Player ${playerIndex}: Equipment stats updated`, 'info');
+}
+
+// Initialize equipment system
+function initializeEquipmentSystem() {
+    // Equipment initialization logic would go here
+    debugLog('Equipment system initialized', 'info');
+}
