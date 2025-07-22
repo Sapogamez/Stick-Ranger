@@ -8,330 +8,301 @@
 </head>
 <body>
     <div class="game-container">
-        <!-- Top Row -->
-        <div class="top-row">
-            <!-- Main Game Box -->
-            <div class="game-box">
-                <div class="grass-floor"></div>
-                
-                <!-- Stick Figures -->
-                <div class="stick-figure" id="player1">
-                    <div class="player-label">P1</div>
-                    <div class="stick-head"></div>
-                    <div class="stick-body"></div>
-                    <div class="stick-arm-left"></div>
-                    <div class="stick-arm-right"></div>
-                    <div class="stick-leg-left"></div>
-                    <div class="stick-leg-right"></div>
+        <!-- Left Settings Sidebar -->
+        <div class="settings-sidebar left-sidebar" id="left-sidebar">
+            <div class="sidebar-toggle" id="left-toggle">⚙️</div>
+            <div class="sidebar-content">
+                <h3>Game Settings</h3>
+                <div class="settings-group">
+                    <h4>Game Speed</h4>
+                    <label>
+                        Speed: <input type="range" id="game-speed" min="0.5" max="5" step="0.5" value="1">
+                        <span id="speed-value">1x</span>
+                    </label>
                 </div>
-                
-                <div class="stick-figure" id="player2">
-                    <div class="player-label">P2</div>
-                    <div class="stick-head"></div>
-                    <div class="stick-body"></div>
-                    <div class="stick-arm-left"></div>
-                    <div class="stick-arm-right"></div>
-                    <div class="stick-leg-left"></div>
-                    <div class="stick-leg-right"></div>
+                <div class="settings-group">
+                    <h4>Combat</h4>
+                    <label>
+                        <input type="checkbox" id="auto-battle" checked> Auto Battle
+                    </label>
+                    <label>
+                        <input type="checkbox" id="instant-combat"> Instant Combat
+                    </label>
+                    <label>
+                        Damage: <input type="range" id="damage-multiplier" min="0.1" max="10" step="0.1" value="1">
+                        <span id="damage-value">1x</span>
+                    </label>
                 </div>
-                
-                <div class="stick-figure" id="player3">
-                    <div class="player-label">P3</div>
-                    <div class="stick-head"></div>
-                    <div class="stick-body"></div>
-                    <div class="stick-arm-left"></div>
-                    <div class="stick-arm-right"></div>
-                    <div class="stick-leg-left"></div>
-                    <div class="stick-leg-right"></div>
+                <div class="settings-group">
+                    <h4>Experience</h4>
+                    <label>
+                        XP Rate: <input type="range" id="xp-multiplier" min="1" max="100" step="1" value="1">
+                        <span id="xp-value">1x</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="guaranteed-drops"> Guaranteed Drops
+                    </label>
                 </div>
-                
-                <div class="stick-figure" id="player4">
-                    <div class="player-label">P4</div>
-                    <div class="stick-head"></div>
-                    <div class="stick-body"></div>
-                    <div class="stick-arm-left"></div>
-                    <div class="stick-arm-right"></div>
-                    <div class="stick-leg-left"></div>
-                    <div class="stick-leg-right"></div>
-                </div>
-                
-                <!-- Enemy Container -->
-                <div id="enemy-container"></div>
             </div>
-            
-            <!-- Map Section -->
-            <div class="map-box">
-                <h3>Map</h3>
-                <div id="minimap">
-                    <div class="map-zone forest">
-                        <div class="player-dot" style="top: 10px; left: 15px;"></div>
-                        <div class="player-dot" style="top: 13px; left: 18px;"></div>
-                        <div class="player-dot" style="top: 16px; left: 21px;"></div>
-                        <div class="player-dot" style="top: 19px; left: 24px;"></div>
+        </div>
+        <!-- Main Game Area -->
+        <div class="main-game-area">
+            <!-- Top Row -->
+            <div class="top-row">
+                <div class="game-box">
+                    <div class="grass-floor"></div>
+                    <div class="stickman-row">
+                        <div class="stick-figure" id="player1"></div>
+                        <div class="stick-figure" id="player2"></div>
+                        <div class="stick-figure" id="player3"></div>
+                        <div class="stick-figure" id="player4"></div>
                     </div>
-                    <div class="map-zone plains active">
-                        <div class="player-dot" style="top: 15px; left: 55px;"></div>
-                        <div class="player-dot" style="top: 18px; left: 58px;"></div>
-                        <div class="player-dot" style="top: 21px; left: 61px;"></div>
-                        <div class="player-dot" style="top: 24px; left: 64px;"></div>
+                    <div id="enemy-container"></div>
+                </div>
+                <div class="map-box">
+                    <h3>Map</h3>
+                    <div id="minimap"></div>
+                    <!-- Optionally, add a fullscreen map modal for future expansion -->
+                    <div id="fullscreen-map"></div>
                     </div>
                     <div class="map-zone mountains">
-                        <div class="player-dot" style="top: 45px; left: 12px;"></div>
-                        <div class="player-dot" style="top: 48px; left: 15px;"></div>
-                        <div class="player-dot" style="top: 51px; left: 18px;"></div>
-                        <div class="player-dot" style="top: 54px; left: 21px;"></div>
+                        <div class="player-dot mountains-dot-1"></div>
+                        <div class="player-dot mountains-dot-2"></div>
+                        <div class="player-dot mountains-dot-3"></div>
+                        <div class="player-dot mountains-dot-4"></div>
                     </div>
                     <div class="map-zone desert">
-                        <div class="player-dot" style="top: 45px; left: 50px;"></div>
-                        <div class="player-dot" style="top: 48px; left: 53px;"></div>
-                        <div class="player-dot" style="top: 51px; left: 56px;"></div>
-                        <div class="player-dot" style="top: 54px; left: 59px;"></div>
+                        <div class="player-dot desert-dot-1"></div>
+                        <div class="player-dot desert-dot-2"></div>
+                        <div class="player-dot desert-dot-3"></div>
+                        <div class="player-dot desert-dot-4"></div>
                     </div>
                     <div class="map-zone cave">
-                        <div class="player-dot" style="top: 58px; left: 85px;"></div>
-                        <div class="player-dot" style="top: 61px; left: 88px;"></div>
-                        <div class="player-dot" style="top: 64px; left: 91px;"></div>
-                        <div class="player-dot" style="top: 67px; left: 94px;"></div>
+                        <div class="player-dot cave-dot-1"></div>
+                        <div class="player-dot cave-dot-2"></div>
+                        <div class="player-dot cave-dot-3"></div>
+                        <div class="player-dot cave-dot-4"></div>
+                    </div>
+                    </div>
+                </div>
+                <div class="shared-inventory-box">
+                    <h3>Shared Inventory</h3>
+                    <div id="shared-inventory-grid"></div>
+                </div>
+            </div>
+            <!-- Combat Log Row -->
+            <div class="combat-log-row">
+                <div class="combat-section">
+                    <div class="combat-log-container">
+                        <h3>Combat Log</h3>
+                        <div id="combat-log"></div>
+                    </div>
+                    <button id="auto-battle-btn">Auto Battle: OFF</button>
+                </div>
+            </div>
+            <!-- Bottom Row - Player Cards -->
+            <div class="bottom-row">
+                <!-- Player 1 -->
+                <div class="player-card">
+                    <h3>Player 1</h3>
+                    <div class="card-tabs">
+                        <button class="tab-btn active">Class</button>
+                        <button class="tab-btn">Equipment</button>
+                    </div>
+                    <div class="tab-content active">
+                        <div class="player-class">Warrior</div>
+                        <select class="class-select" title="Select player class">
+                            <option value="Warrior">Warrior</option>
+                            <option value="Archer">Archer</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Priest">Priest</option>
+                            <option value="Boxer">Boxer</option>
+                        </select>
+                        <button class="apply-class">Apply Class</button>
+                        <div class="player-stats">
+                            <div>HP: <span class="stat-value" data-stat="hp">100</span></div>
+                            <div>ATK: <span class="stat-value" data-stat="atk">10</span></div>
+                            <div>DEF: <span class="stat-value" data-stat="def">5</span></div>
+                            <div>SPD: <span class="stat-value" data-stat="spd">3</span></div>
+                            <div>RNG: <span class="stat-value" data-stat="range">3</span></div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="equipment-slots">
+                            <div>Weapon: <span id="weapon-1">None</span></div>
+                            <div>Armor: <span id="armor-1">None</span></div>
+                            <div>Accessory: <span id="accessory-1">None</span></div>
+                            <div>Boots: <span id="boots-1">None</span></div>
+                        </div>
+                        <div class="equipment-stats">
+                            <div>ATK: +0</div>
+                            <div>DEF: +0</div>
+                            <div>SPD: +0</div>
+                            <div>HP: +0</div>
+                            <div>RNG: +0</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Player 2 -->
+                <div class="player-card">
+                    <h3>Player 2</h3>
+                    <div class="card-tabs">
+                        <button class="tab-btn active">Class</button>
+                        <button class="tab-btn">Equipment</button>
+                    </div>
+                    <div class="tab-content active">
+                        <div class="player-class">Archer</div>
+                        <select class="class-select" title="Select player class">
+                            <option value="Warrior">Warrior</option>
+                            <option value="Archer">Archer</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Priest">Priest</option>
+                            <option value="Boxer">Boxer</option>
+                        </select>
+                        <button class="apply-class">Apply Class</button>
+                        <div class="player-stats">
+                            <div>HP: <span class="stat-value" data-stat="hp">80</span></div>
+                            <div>ATK: <span class="stat-value" data-stat="atk">15</span></div>
+                            <div>DEF: <span class="stat-value" data-stat="def">3</span></div>
+                            <div>SPD: <span class="stat-value" data-stat="spd">5</span></div>
+                            <div>RNG: <span class="stat-value" data-stat="range">12</span></div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="equipment-slots">
+                            <div>Weapon: <span id="weapon-2">None</span></div>
+                            <div>Armor: <span id="armor-2">None</span></div>
+                            <div>Accessory: <span id="accessory-2">None</span></div>
+                            <div>Boots: <span id="boots-2">None</span></div>
+                        </div>
+                        <div class="equipment-stats">
+                            <div>ATK: +0</div>
+                            <div>DEF: +0</div>
+                            <div>SPD: +0</div>
+                            <div>HP: +0</div>
+                            <div>RNG: +0</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Player 3 -->
+                <div class="player-card">
+                    <h3>Player 3</h3>
+                    <div class="card-tabs">
+                        <button class="tab-btn active">Class</button>
+                        <button class="tab-btn">Equipment</button>
+                    </div>
+                    <div class="tab-content active">
+                        <div class="player-class">Mage</div>
+                        <select class="class-select" title="Select player class">
+                            <option value="Warrior">Warrior</option>
+                            <option value="Archer">Archer</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Priest">Priest</option>
+                            <option value="Boxer">Boxer</option>
+                        </select>
+                        <button class="apply-class">Apply Class</button>
+                        <div class="player-stats">
+                            <div>HP: <span class="stat-value" data-stat="hp">70</span></div>
+                            <div>ATK: <span class="stat-value" data-stat="atk">20</span></div>
+                            <div>DEF: <span class="stat-value" data-stat="def">2</span></div>
+                            <div>SPD: <span class="stat-value" data-stat="spd">4</span></div>
+                            <div>RNG: <span class="stat-value" data-stat="range">15</span></div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="equipment-slots">
+                            <div>Weapon: <span id="weapon-3">None</span></div>
+                            <div>Armor: <span id="armor-3">None</span></div>
+                            <div>Accessory: <span id="accessory-3">None</span></div>
+                            <div>Boots: <span id="boots-3">None</span></div>
+                        </div>
+                        <div class="equipment-stats">
+                            <div>ATK: +0</div>
+                            <div>DEF: +0</div>
+                            <div>SPD: +0</div>
+                            <div>HP: +0</div>
+                            <div>RNG: +0</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Player 4 -->
+                <div class="player-card">
+                    <h3>Player 4</h3>
+                    <div class="card-tabs">
+                        <button class="tab-btn active">Class</button>
+                        <button class="tab-btn">Equipment</button>
+                    </div>
+                    <div class="tab-content active">
+                        <div class="player-class">Priest</div>
+                        <select class="class-select" title="Select player class">
+                            <option value="Warrior">Warrior</option>
+                            <option value="Archer">Archer</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Priest">Priest</option>
+                            <option value="Boxer">Boxer</option>
+                        </select>
+                        <button class="apply-class">Apply Class</button>
+                        <div class="player-stats">
+                            <div>HP: <span class="stat-value" data-stat="hp">90</span></div>
+                            <div>ATK: <span class="stat-value" data-stat="atk">2</span></div>
+                            <div>DEF: <span class="stat-value" data-stat="def">6</span></div>
+                            <div>SPD: <span class="stat-value" data-stat="spd">3</span></div>
+                            <div>RNG: <span class="stat-value" data-stat="range">10</span></div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="equipment-slots">
+                            <div>Weapon: <span id="weapon-4">None</span></div>
+                            <div>Armor: <span id="armor-4">None</span></div>
+                            <div>Accessory: <span id="accessory-4">None</span></div>
+                            <div>Boots: <span id="boots-4">None</span></div>
+                        </div>
+                        <div class="equipment-stats">
+                            <div>ATK: +0</div>
+                            <div>DEF: +0</div>
+                            <div>SPD: +0</div>
+                            <div>HP: +0</div>
+                            <div>RNG: +0</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Middle Row - Combat Log and Auto Battle -->
-        <div class="middle-row">
-            <div class="combat-section">
-                <div class="combat-log-container">
-                    <h3>Combat Log</h3>
-                    <div id="combat-log"></div>
+        <!-- End Main Game Area -->
+        <!-- Right Settings Sidebar -->
+        <div class="settings-sidebar right-sidebar collapsed" id="right-sidebar">
+            <div class="sidebar-toggle" id="right-toggle">🔧</div>
+            <div class="sidebar-content">
+                <h3>Debug Tools</h3>
+                <div class="settings-group">
+                    <h4>Debug Options</h4>
+                    <label>
+                        <input type="checkbox" id="show-hitboxes"> Show Hitboxes
+                    </label>
+                    <label>
+                        <input type="checkbox" id="show-fps"> Show FPS
+                    </label>
+                    <label>
+                        <input type="checkbox" id="debug-mode" checked> Debug Mode
+                    </label>
                 </div>
-                <button id="auto-battle-btn">Auto Battle: OFF</button>
-            </div>
-        </div>
-        
-        <!-- Bottom Row - Player Cards -->
-        <div class="bottom-row">
-            <!-- Player 1 -->
-            <div class="player-card">
-                <h3>Player 1</h3>
-                <div class="card-tabs">
-                    <button class="tab-btn active">Class</button>
-                    <button class="tab-btn">Equipment</button>
-                    <button class="tab-btn">Inventory</button>
+                <div class="settings-group">
+                    <h4>Player Actions</h4>
+                    <button class="action-btn" id="heal-all">Heal All</button>
+                    <button class="action-btn" id="level-up-all">Level Up All</button>
+                    <button class="action-btn warning" id="reset-players">Reset Players</button>
+                    <button class="action-btn" id="unlock-all-zones">Unlock Zones</button>
                 </div>
-                
-                <div class="tab-content active">
-                    <div class="player-class">Warrior</div>
-                    <select class="class-select" title="Select player class">
-                        <option value="Warrior">Warrior</option>
-                        <option value="Archer">Archer</option>
-                        <option value="Mage">Mage</option>
-                        <option value="Priest">Priest</option>
-                        <option value="Boxer">Boxer</option>
-                    </select>
-                    <button class="apply-class">Apply Class</button>
-                    
-                    <div class="player-stats">
-                        <div>HP: <span class="stat-value" data-stat="hp">100</span></div>
-                        <div>ATK: <span class="stat-value" data-stat="atk">10</span></div>
-                        <div>DEF: <span class="stat-value" data-stat="def">5</span></div>
-                        <div>SPD: <span class="stat-value" data-stat="spd">3</span></div>
-                        <div>RNG: <span class="stat-value" data-stat="range">3</span></div>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                    <div class="equipment-slots">
-                        <div>Weapon: <span id="weapon-1">None</span></div>
-                        <div>Armor: <span id="armor-1">None</span></div>
-                        <div>Accessory: <span id="accessory-1">None</span></div>
-                        <div>Boots: <span id="boots-1">None</span></div>
-                    </div>
-                    <div class="equipment-stats">
-                        <div>ATK: +0</div>
-                        <div>DEF: +0</div>
-                        <div>SPD: +0</div>
-                        <div>HP: +0</div>
-                        <div>RNG: +0</div>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                    <div class="inventory-grid">
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Player 2 -->
-            <div class="player-card">
-                <h3>Player 2</h3>
-                <div class="card-tabs">
-                    <button class="tab-btn active">Class</button>
-                    <button class="tab-btn">Equipment</button>
-                    <button class="tab-btn">Inventory</button>
-                </div>
-                
-                <div class="tab-content active">
-                    <div class="player-class">Archer</div>
-                    <select class="class-select" title="Select player class">
-                        <option value="Warrior">Warrior</option>
-                        <option value="Archer">Archer</option>
-                        <option value="Mage">Mage</option>
-                        <option value="Priest">Priest</option>
-                        <option value="Boxer">Boxer</option>
-                    </select>
-                    <button class="apply-class">Apply Class</button>
-                    
-                    <div class="player-stats">
-                        <div>HP: <span class="stat-value" data-stat="hp">80</span></div>
-                        <div>ATK: <span class="stat-value" data-stat="atk">15</span></div>
-                        <div>DEF: <span class="stat-value" data-stat="def">3</span></div>
-                        <div>SPD: <span class="stat-value" data-stat="spd">5</span></div>
-                        <div>RNG: <span class="stat-value" data-stat="range">12</span></div>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                    <div class="equipment-slots">
-                        <div>Weapon: <span id="weapon-2">None</span></div>
-                        <div>Armor: <span id="armor-2">None</span></div>
-                        <div>Accessory: <span id="accessory-2">None</span></div>
-                        <div>Boots: <span id="boots-2">None</span></div>
-                    </div>
-                    <div class="equipment-stats">
-                        <div>ATK: +0</div>
-                        <div>DEF: +0</div>
-                        <div>SPD: +0</div>
-                        <div>HP: +0</div>
-                        <div>RNG: +0</div>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                    <div class="inventory-grid">
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Player 3 -->
-            <div class="player-card">
-                <h3>Player 3</h3>
-                <div class="card-tabs">
-                    <button class="tab-btn active">Class</button>
-                    <button class="tab-btn">Equipment</button>
-                    <button class="tab-btn">Inventory</button>
-                </div>
-                
-                <div class="tab-content active">
-                    <div class="player-class">Mage</div>
-                    <select class="class-select" title="Select player class">
-                        <option value="Warrior">Warrior</option>
-                        <option value="Archer">Archer</option>
-                        <option value="Mage">Mage</option>
-                        <option value="Priest">Priest</option>
-                        <option value="Boxer">Boxer</option>
-                    </select>
-                    <button class="apply-class">Apply Class</button>
-                    
-                    <div class="player-stats">
-                        <div>HP: <span class="stat-value" data-stat="hp">70</span></div>
-                        <div>ATK: <span class="stat-value" data-stat="atk">20</span></div>
-                        <div>DEF: <span class="stat-value" data-stat="def">2</span></div>
-                        <div>SPD: <span class="stat-value" data-stat="spd">4</span></div>
-                        <div>RNG: <span class="stat-value" data-stat="range">15</span></div>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                    <div class="equipment-slots">
-                        <div>Weapon: <span id="weapon-3">None</span></div>
-                        <div>Armor: <span id="armor-3">None</span></div>
-                        <div>Accessory: <span id="accessory-3">None</span></div>
-                        <div>Boots: <span id="boots-3">None</span></div>
-                    </div>
-                    <div class="equipment-stats">
-                        <div>ATK: +0</div>
-                        <div>DEF: +0</div>
-                        <div>SPD: +0</div>
-                        <div>HP: +0</div>
-                        <div>RNG: +0</div>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                    <div class="inventory-grid">
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Player 4 -->
-            <div class="player-card">
-                <h3>Player 4</h3>
-                <div class="card-tabs">
-                    <button class="tab-btn active">Class</button>
-                    <button class="tab-btn">Equipment</button>
-                    <button class="tab-btn">Inventory</button>
-                </div>
-                
-                <div class="tab-content active">
-                    <div class="player-class">Priest</div>
-                    <select class="class-select" title="Select player class">
-                        <option value="Warrior">Warrior</option>
-                        <option value="Archer">Archer</option>
-                        <option value="Mage">Mage</option>
-                        <option value="Priest">Priest</option>
-                        <option value="Boxer">Boxer</option>
-                    </select>
-                    <button class="apply-class">Apply Class</button>
-                    
-                    <div class="player-stats">
-                        <div>HP: <span class="stat-value" data-stat="hp">90</span></div>
-                        <div>ATK: <span class="stat-value" data-stat="atk">2</span></div>
-                        <div>DEF: <span class="stat-value" data-stat="def">6</span></div>
-                        <div>SPD: <span class="stat-value" data-stat="spd">3</span></div>
-                        <div>RNG: <span class="stat-value" data-stat="range">10</span></div>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                    <div class="equipment-slots">
-                        <div>Weapon: <span id="weapon-4">None</span></div>
-                        <div>Armor: <span id="armor-4">None</span></div>
-                        <div>Accessory: <span id="accessory-4">None</span></div>
-                        <div>Boots: <span id="boots-4">None</span></div>
-                    </div>
-                    <div class="equipment-stats">
-                        <div>ATK: +0</div>
-                        <div>DEF: +0</div>
-                        <div>SPD: +0</div>
-                        <div>HP: +0</div>
-                        <div>RNG: +0</div>
-                    </div>
-                </div>
-                
-                <div class="tab-content">
-                    <div class="inventory-grid">
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                        <div class="inventory-slot"></div>
-                    </div>
+                <div class="settings-group">
+                    <h4>Save/Load</h4>
+                    <button class="action-btn" id="save-game">Save Game</button>
+                    <button class="action-btn" id="load-game">Load Game</button>
+                    <button class="action-btn" id="export-save">Export</button>
+                    <button class="action-btn" id="import-save">Import</button>
                 </div>
             </div>
         </div>
     </div>
-    
     <!-- Fullscreen Map Modal -->
     <div id="fullscreen-map" class="map-modal">
         <div class="map-container">
@@ -370,7 +341,6 @@
             </div>
         </div>
     </div>
-
     <script src="../JavaScript/script_v4.js"></script>
 </body>
 </html>

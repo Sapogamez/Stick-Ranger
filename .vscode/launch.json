@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Launch Stick Ranger (Chrome)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "file://${workspaceFolder}/HTML/index_v3.html",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-user-data",
+            "runtimeArgs": [
+                "--disable-web-security",
+                "--disable-features=VizDisplayCompositor"
+            ]
+        },
+        {
+            "name": "Launch Stick Ranger (Edge)",
+            "type": "msedge",
+            "request": "launch",
+            "url": "file://${workspaceFolder}/HTML/index_v3.html",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "userDataDir": "${workspaceFolder}/.vscode/edge-debug-user-data"
+        },
+        {
+            "name": "Launch with Live Server",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:5500/HTML/index_v3.html",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-user-data"
+        },
+        {
+            "name": "Attach to Chrome",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true
+        }
+    ]
+}
