@@ -415,6 +415,8 @@ function addHealthBarsToPlayers() {
             healthBar.appendChild(healthFill);
             playerElement.appendChild(healthBar);
         }
+    });
+}
 
 function getPlayerStats(playerIndex) {
     const playerCard = document.querySelectorAll('.player-card')[playerIndex - 1];
@@ -679,7 +681,7 @@ function processCombatTurn() {
             }
         }
     });
-// Priest infinite range healing
+}
 function healNearbyPlayersInfiniteRange(priest, playerPositions) {
     let healed = false;
     // Find most damaged player (lowest HP, not self, not dead)
