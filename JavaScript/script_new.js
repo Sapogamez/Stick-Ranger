@@ -9,7 +9,7 @@ const classStats = {
 
 // Test that script is loading
 console.log('Script loaded! Class stats:', classStats);
-alert('Script is working! Check console for debug info.');
+// alert('Script is working! Check console for debug info.'); // Removed for cleaner UX
 
 // Debug system
 let debugEnabled = true;
@@ -762,7 +762,7 @@ document.addEventListener('DOMContentLoaded', function() {
         debugLog(`Setting up player card ${index + 1}`, 'info');
         
         const select = card.querySelector('.class-select');
-        const applyBtn = card.querySelector('.apply-class');
+        const applyBtn = card.querySelector('.apply-btn');
         const currentClass = card.querySelector('.player-class').textContent.trim();
         
         if (!select) {
@@ -770,7 +770,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         if (!applyBtn) {
-            debugLog(`ERROR: Missing .apply-class button in card ${index + 1}`, 'error');
+            debugLog(`ERROR: Missing .apply-btn button in card ${index + 1}`, 'error');
             return;
         }
         
