@@ -967,4 +967,10 @@ function updateEquipmentStats(playerIndex) {
     `;
     
     debugLog(`Player ${playerIndex}: Equipment stats updated`, 'info');
+}
+
+// Close remaining open blocks
+}
+}
+}
 

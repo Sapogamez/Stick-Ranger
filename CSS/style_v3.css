@@ -478,6 +478,8 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     align-items: stretch;
+}
+
 /* Flexbox row for stickmen */
 .stickman-row {
     display: flex;
@@ -499,7 +501,6 @@ body {
     justify-content: center;
     position: relative;
     z-index: 3;
-}
 }
 
 .map-box {
