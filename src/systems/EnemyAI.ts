@@ -8,7 +8,7 @@ class EnemyAI {
   }
 
   public static moveTowardsNearestPlayer(enemy: Enemy, players: Player[], speed: number): void {
-    if (players.length === 0) return;
+    if (players.length === 0) {return;}
 
     // Find the nearest player
     let nearestPlayer = players[0];
