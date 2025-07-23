@@ -19,6 +19,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "ts-jest": "^29.4.0",
     "typescript": "^5.8.3"
   },
   "keywords": ["game", "typescript", "react", "canvas", "entity-system"],
