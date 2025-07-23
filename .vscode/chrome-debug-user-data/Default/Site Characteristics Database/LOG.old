@@ -1,3 +1,5 @@
-2025/07/23-01:21:24.676 472f2 Reusing MANIFEST /Users/saminhoek/Documents/GitHub/Stick-Ranger/.vscode/chrome-debug-user-data/Default/Site Characteristics Database/MANIFEST-000001
-2025/07/23-01:21:24.676 472f2 Recovering log #3
-2025/07/23-01:21:24.676 472f2 Reusing old log /Users/saminhoek/Documents/GitHub/Stick-Ranger/.vscode/chrome-debug-user-data/Default/Site Characteristics Database/000003.log 
+2025/07/23-18:34:29.252 7478 Log #3: 16 ops saved to Table #4 OK
+2025/07/23-18:34:29.259 7478 Archiving D:\Programming\Stick-Ranger\.vscode\chrome-debug-user-data\Default\Site Characteristics Database/000003.log: OK
+2025/07/23-18:34:29.260 7478 Table #4: 16 entries OK
+2025/07/23-18:34:29.260 7478 Archiving D:\Programming\Stick-Ranger\.vscode\chrome-debug-user-data\Default\Site Characteristics Database/MANIFEST-000001: OK
+2025/07/23-18:34:29.268 7478 **** Repaired leveldb D:\Programming\Stick-Ranger\.vscode\chrome-debug-user-data\Default\Site Characteristics Database; recovered 1 files; 352 bytes. Some data may have been lost. ****

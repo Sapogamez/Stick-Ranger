@@ -1,3 +1,2 @@
-2025/07/23-01:55:03.774 4f865 Reusing MANIFEST /Users/saminhoek/Documents/GitHub/Stick-Ranger/.vscode/chrome-debug-user-data/Default/Local Storage/leveldb/MANIFEST-000001
-2025/07/23-01:55:03.777 4f865 Recovering log #3
-2025/07/23-01:55:03.777 4f865 Reusing old log /Users/saminhoek/Documents/GitHub/Stick-Ranger/.vscode/chrome-debug-user-data/Default/Local Storage/leveldb/000003.log 
+2025/07/23-18:34:29.276 7550 Creating DB D:\Programming\Stick-Ranger\.vscode\chrome-debug-user-data\Default\Local Storage\leveldb since it was missing.
+2025/07/23-18:34:29.292 7550 Reusing MANIFEST D:\Programming\Stick-Ranger\.vscode\chrome-debug-user-data\Default\Local Storage\leveldb/MANIFEST-000001
