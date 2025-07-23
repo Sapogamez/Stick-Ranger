@@ -1,0 +1,159 @@
+.enemy {
+  position: absolute;
+  background-color: red;
+  width: 20px;
+  height: 20px;
+  --enemy-health-width: 100%;
+  transform: translate(var(--enemy-x, 0), var(--enemy-y, 0));
+}
+
+.health-bar {
+  position: relative;
+  width: 20px;
+  height: 4px;
+  background-color: gray;
+  margin-bottom: 2px;
+}
+
+.health-bar-fill {
+  height: 100%;
+  background-color: green;
+  width: var(--health-bar-width, 100%);
+  transition: width 0.3s ease-in-out;
+}
+
+.health-bar-fill[data-health="critical"] {
+  background-color: red;
+}
+
+.health-bar-fill[data-health="low"] {
+  background-color: orange;
+}
+
+.health-bar-fill[data-health="medium"] {
+  background-color: yellow;
+}
+
+.health-bar-fill[data-health="high"] {
+  background-color: green;
+}
+
+.player {
+  position: relative;
+  margin-bottom: 10px;
+  --player-health-width: 100%;
+}
+
+.player .health-bar {
+  position: relative;
+  width: 100px;
+  height: 10px;
+  background-color: gray;
+  margin-bottom: 5px;
+}
+
+.player .health-bar-fill {
+  height: 100%;
+  background-color: green;
+  width: var(--health-bar-width, 100%);
+  transition: width 0.3s ease-in-out;
+}
+
+.player-hp-bar {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 5px;
+  background-color: gray;
+  border-radius: var(--radius-sm);
+}
+
+.player-hp-bar-fill {
+  height: 100%;
+  background-color: green;
+  border-radius: var(--radius-sm);
+  transition: width 0.3s ease-in-out;
+}
+
+.player-card-hp-bar {
+  width: 100%;
+  height: 10px;
+  background-color: gray;
+  border-radius: var(--radius-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.player-card-hp-bar-fill {
+  height: 100%;
+  background-color: green;
+  border-radius: var(--radius-sm);
+  transition: width 0.3s ease-in-out;
+}
+
+.game-over-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.game-over-screen h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.game-over-screen button {
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.game-over-screen button:hover {
+  background-color: #cc0000;
+}
+
+.player-health {
+  background-color: green;
+}
+
+.player-health[data-health="medium"] {
+  background-color: yellow;
+}
+
+.player-health[data-health="low"] {
+  background-color: orange;
+}
+
+.player-health[data-health="critical"] {
+  background-color: red;
+}
+
+.enemy-health {
+  background-color: green;
+}
+
+.enemy-health[data-health="medium"] {
+  background-color: yellow;
+}
+
+.enemy-health[data-health="low"] {
+  background-color: orange;
+}
+
+.enemy-health[data-health="critical"] {
+  background-color: red;
+}

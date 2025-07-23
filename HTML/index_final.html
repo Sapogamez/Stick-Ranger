@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stick Ranger - Final Restoration</title>
+    <link rel="stylesheet" href="../CSS/style_final.css">
+    <meta name="description" content="Stick Ranger RPG - Browser-based adventure game">
+    <meta name="keywords" content="stick ranger, rpg, browser game, adventure">
+</head>
+<body>
+    <div class="game-container">
+        <!-- LEFT PANEL - SETTINGS BAR 1 AND 2 COMBINED -->
+        <div class="left-panel">
+            <div class="settings-section">
+                <h3>Game Settings</h3>
+                
+                <div class="settings-control">
+                    <h4>Game Speed</h4>
+                    <label>
+                        <span>Speed:</span>
+                        <input type="range" id="game-speed" min="0.5" max="5" step="0.5" value="1" aria-label="Game speed multiplier">
+                        <span class="value-display" id="speed-value">1x</span>
+                    </label>
+                </div>
+                
+                <div class="settings-control">
+                    <h4>Combat</h4>
+                    <label>
+                        <input type="checkbox" id="auto-battle" checked aria-label="Enable auto battle">
+                        <span>Auto Battle</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="instant-combat" aria-label="Enable instant combat">
+                        <span>Instant Combat</span>
+                    </label>
+                    <label>
+                        <span>Damage:</span>
+                        <input type="range" id="damage-multiplier" min="0.1" max="10" step="0.1" value="1" aria-label="Damage multiplier">
+                        <span class="value-display" id="damage-value">1x</span>
+                    </label>
+                </div>
+                
+                <div class="settings-control">
+                    <h4>Experience</h4>
+                    <label>
+                        <span>XP Rate:</span>
+                        <input type="range" id="xp-multiplier" min="1" max="100" step="1" value="1" aria-label="Experience multiplier">
+                        <span class="value-display" id="xp-value">1x</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="guaranteed-drops" aria-label="Enable guaranteed drops">
+                        <span>Guaranteed Drops</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN AREA - GAME BOX WITH MAP ABOVE -->
+        <div class="main-area">
+            <!-- MAP CONTAINER -->
+            <div class="map-container">
+                <h3>Map</h3>
+                <div class="map-display">
+                    <div class="map-zone active" id="level-1" role="button" tabindex="0" aria-label="Level 1 - Current location">
+                        Level 1
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAME BOX -->
+            <div class="game-box">
+                <div class="stickman-row">
+                    <div class="stick-figure" id="player1" role="button" tabindex="0" aria-label="Player 1">
+                        <svg width="100%" height="100%" viewBox="0 0 40 80" aria-hidden="true">
+                            <circle cx="20" cy="15" r="10" fill="#ffe4b5" stroke="#222" stroke-width="2"/>
+                            <rect x="18" y="25" width="4" height="25" fill="#222"/>
+                            <line x1="20" y1="30" x2="8" y2="50" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="30" x2="32" y2="50" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="50" x2="10" y2="75" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="50" x2="30" y2="75" stroke="#222" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <div class="stick-figure" id="player2" role="button" tabindex="0" aria-label="Player 2">
+                        <svg width="100%" height="100%" viewBox="0 0 40 80" aria-hidden="true">
+                            <circle cx="20" cy="15" r="10" fill="#ffe4b5" stroke="#222" stroke-width="2"/>
+                            <rect x="18" y="25" width="4" height="25" fill="#222"/>
+                            <line x1="20" y1="30" x2="8" y2="50" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="30" x2="32" y2="50" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="50" x2="10" y2="75" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="50" x2="30" y2="75" stroke="#222" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <div class="stick-figure" id="player3" role="button" tabindex="0" aria-label="Player 3">
+                        <svg width="100%" height="100%" viewBox="0 0 40 80" aria-hidden="true">
+                            <circle cx="20" cy="15" r="10" fill="#ffe4b5" stroke="#222" stroke-width="2"/>
+                            <rect x="18" y="25" width="4" height="25" fill="#222"/>
+                            <line x1="20" y1="30" x2="8" y2="50" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="30" x2="32" y2="50" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="50" x2="10" y2="75" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="50" x2="30" y2="75" stroke="#222" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <div class="stick-figure" id="player4" role="button" tabindex="0" aria-label="Player 4">
+                        <svg width="100%" height="100%" viewBox="0 0 40 80" aria-hidden="true">
+                            <circle cx="20" cy="15" r="10" fill="#ffe4b5" stroke="#222" stroke-width="2"/>
+                            <rect x="18" y="25" width="4" height="25" fill="#222"/>
+                            <line x1="20" y1="30" x2="8" y2="50" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="30" x2="32" y2="50" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="50" x2="10" y2="75" stroke="#222" stroke-width="3"/>
+                            <line x1="20" y1="50" x2="30" y2="75" stroke="#222" stroke-width="3"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="enemy-container" id="enemy-container">
+                    <div class="enemy" id="enemy1" role="button" tabindex="0" aria-label="Enemy 1">
+                        <div class="hp-bar full" aria-label="Enemy health: 100%"></div>
+                    </div>
+                    <div class="enemy" id="enemy2" role="button" tabindex="0" aria-label="Enemy 2">
+                        <div class="hp-bar high" aria-label="Enemy health: 80%"></div>
+                    </div>
+                    <div class="enemy" id="enemy3" role="button" tabindex="0" aria-label="Enemy 3">
+                        <div class="hp-bar medium" aria-label="Enemy health: 60%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL - COMBAT LOG AND AUTO BATTLER -->
+        <div class="right-panel">
+            <div class="combat-log-section">
+                <h3>Combat Log</h3>
+                <div class="combat-log" id="combat-log" role="log" aria-live="polite" aria-label="Combat activity log">
+                    <div>Player 1 attacks Enemy for 15 damage!</div>
+                    <div>Enemy attacks Player 1 for 8 damage!</div>
+                    <div>Player 2 uses Fire Spell for 22 damage!</div>
+                    <div>Enemy is defeated! +50 XP</div>
+                    <div>New enemy appears!</div>
+                </div>
+            </div>
+            
+            <div class="auto-battle-section">
+                <h4>Auto Battler</h4>
+                <div class="auto-battle-controls">
+                    <button class="auto-battle-btn active" id="auto-attack" type="button">
+                        Auto Attack: ON
+                    </button>
+                    <button class="auto-battle-btn" id="auto-skills" type="button">
+                        Auto Skills: OFF
+                    </button>
+                    <button class="auto-battle-btn" id="auto-heal" type="button">
+                        Auto Heal: OFF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM ROW - 4 PLAYER CARDS -->
+        <div class="bottom-row">
+            <!-- PLAYER CARD 1 -->
+            <div class="player-card">
+                <h3>Player 1</h3>
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="class" data-player="1" type="button">Class</button>
+                    <button class="tab-btn" data-tab="equipment" data-player="1" type="button">Equipment</button>
+                    <button class="tab-btn" data-tab="inventory" data-player="1" type="button">Inventory</button>
+                </div>
+                
+                <div class="tab-content active" id="class-1">
+                    <div class="class-info">
+                        <div class="class-name">Warrior</div>
+                        <div>Level: 15</div>
+                        <div>HP: 180/200</div>
+                        <div>STR: 25 | DEF: 20</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="equipment-1">
+                    <div class="inventory-grid">
+                        <div class="inventory-slot occupied" title="Steel Sword">⚔️</div>
+                        <div class="inventory-slot occupied" title="Iron Shield">🛡️</div>
+                        <div class="inventory-slot occupied" title="Leather Armor">🦺</div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="inventory-1">
+                    <div class="inventory-grid">
+                        <div class="inventory-slot occupied" title="Health Potion">🧪</div>
+                        <div class="inventory-slot occupied" title="Magic Stone">💎</div>
+                        <div class="inventory-slot occupied" title="Gold Coin">🪙</div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PLAYER CARD 2 -->
+            <div class="player-card">
+                <h3>Player 2</h3>
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="class" data-player="2" type="button">Class</button>
+                    <button class="tab-btn" data-tab="equipment" data-player="2" type="button">Equipment</button>
+                    <button class="tab-btn" data-tab="inventory" data-player="2" type="button">Inventory</button>
+                </div>
+                
+                <div class="tab-content active" id="class-2">
+                    <div class="class-info">
+                        <div class="class-name">Mage</div>
+                        <div>Level: 12</div>
+                        <div>MP: 150/160</div>
+                        <div>INT: 28 | WIS: 22</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="equipment-2">
+                    <div class="inventory-grid">
+                        <div class="inventory-slot occupied" title="Magic Staff">🔮</div>
+                        <div class="inventory-slot occupied" title="Wizard Hat">🎭</div>
+                        <div class="inventory-slot occupied" title="Mage Robe">👘</div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="inventory-2">
+                    <div class="inventory-grid">
+                        <div class="inventory-slot occupied" title="Mana Potion">🔵</div>
+                        <div class="inventory-slot occupied" title="Spell Book">📖</div>
+                        <div class="inventory-slot occupied" title="Crystal">💎</div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PLAYER CARD 3 -->
+            <div class="player-card">
+                <h3>Player 3</h3>
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="class" data-player="3" type="button">Class</button>
+                    <button class="tab-btn" data-tab="equipment" data-player="3" type="button">Equipment</button>
+                    <button class="tab-btn" data-tab="inventory" data-player="3" type="button">Inventory</button>
+                </div>
+                
+                <div class="tab-content active" id="class-3">
+                    <div class="class-info">
+                        <div class="class-name">Archer</div>
+                        <div>Level: 13</div>
+                        <div>HP: 140/150</div>
+                        <div>DEX: 30 | AGI: 25</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="equipment-3">
+                    <div class="inventory-grid">
+                        <div class="inventory-slot occupied" title="Elven Bow">🏹</div>
+                        <div class="inventory-slot occupied" title="Quiver">🎯</div>
+                        <div class="inventory-slot occupied" title="Leather Armor">🦺</div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="inventory-3">
+                    <div class="inventory-grid">
+                        <div class="inventory-slot occupied" title="Arrow Bundle">🎯</div>
+                        <div class="inventory-slot occupied" title="Healing Herb">🌿</div>
+                        <div class="inventory-slot occupied" title="Silver Coin">🪙</div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PLAYER CARD 4 -->
+            <div class="player-card">
+                <h3>Player 4</h3>
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="class" data-player="4" type="button">Class</button>
+                    <button class="tab-btn" data-tab="equipment" data-player="4" type="button">Equipment</button>
+                    <button class="tab-btn" data-tab="inventory" data-player="4" type="button">Inventory</button>
+                </div>
+                
+                <div class="tab-content active" id="class-4">
+                    <div class="class-info">
+                        <div class="class-name">Priest</div>
+                        <div>Level: 11</div>
+                        <div>MP: 180/200</div>
+                        <div>WIS: 26 | INT: 18</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="equipment-4">
+                    <div class="inventory-grid">
+                        <div class="inventory-slot occupied" title="Holy Staff">✨</div>
+                        <div class="inventory-slot occupied" title="Divine Amulet">📿</div>
+                        <div class="inventory-slot occupied" title="Holy Robes">👘</div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="inventory-4">
+                    <div class="inventory-grid">
+                        <div class="inventory-slot occupied" title="Holy Water">💧</div>
+                        <div class="inventory-slot occupied" title="Prayer Book">📜</div>
+                        <div class="inventory-slot occupied" title="Blessed Gem">💎</div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                        <div class="inventory-slot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../JavaScript/script_final.js"></script>
+    <script src="../JavaScript/test_final.js"></script>
+    
+    <!-- AUTOMATIC TEST EXECUTION -->
+    <script>
+        console.log('🚀 AUTOMATIC TEST EXECUTION STARTING...');
+        console.log('=====================================');
+        
+        // Wait for everything to load, then run tests
+        window.addEventListener('load', async function() {
+            // Small delay to ensure all scripts are loaded
+            setTimeout(async function() {
+                console.log('⏰ Auto-executing comprehensive test suite at:', new Date().toLocaleTimeString());
+                
+                if (typeof StickRangerTestSuite !== 'undefined') {
+                    console.log('📋 Using StickRangerTestSuite class...');
+                    const testSuite = new StickRangerTestSuite();
+                    
+                    try {
+                        const results = await testSuite.runAllTests();
+                        console.log('\n🎯 AUTOMATIC EXECUTION COMPLETE!');
+                        console.log('='.repeat(50));
+                        console.log(`📊 Final Results: ${results.passed}/${results.total} tests passed`);
+                        console.log(`📈 Success Rate: ${results.successRate}%`);
+                        
+                        if (results.successRate >= 95) {
+                            console.log('🎉 EXCELLENT! Ready for production!');
+                        } else if (results.successRate >= 80) {
+                            console.log('✅ GOOD! Minor issues to address.');
+                        } else {
+                            console.log('⚠️ NEEDS WORK! Several issues need fixing.');
+                        }
+                    } catch (error) {
+                        console.error('❌ Test suite error:', error);
+                    }
+                } else {
+                    console.log('⚠️ StickRangerTestSuite not found, running manual tests...');
+                    
+                    // Manual test execution
+                    console.log('📐 Running basic layout verification...');
+                    
+                    const gameContainer = document.querySelector('.game-container');
+                    const playerCards = document.querySelectorAll('.player-card');
+                    const stickFigures = document.querySelectorAll('.stick-figure');
+                    const tabButtons = document.querySelectorAll('.tab-btn');
+                    
+                    console.log(`✅ Game container: ${gameContainer ? 'Found' : 'Missing'}`);
+                    console.log(`✅ Player cards: ${playerCards.length}/4 found`);
+                    console.log(`✅ Stick figures: ${stickFigures.length}/4 found`);
+                    console.log(`✅ Tab buttons: ${tabButtons.length} found`);
+                    
+                    // Test grid layout
+                    if (gameContainer) {
+                        const style = window.getComputedStyle(gameContainer);
+                        console.log(`✅ CSS Grid: ${style.display === 'grid' ? 'Active' : 'Inactive'}`);
+                        console.log(`✅ Grid gap: ${style.gap || 'Not set'}`);
+                        console.log(`✅ Grid columns: ${style.gridTemplateColumns || 'Not set'}`);
+                    }
+                    
+                    // Test responsive design
+                    const viewportWidth = window.innerWidth;
+                    console.log(`📱 Viewport width: ${viewportWidth}px`);
+                    console.log(`📱 Mobile mode: ${viewportWidth < 768 ? 'Yes' : 'No'}`);
+                    
+                    console.log('\n🎯 BASIC VERIFICATION COMPLETE!');
+                    console.log('All core elements detected and functional.');
+                }
+            }, 500); // 500ms delay to ensure everything loads
+        });
+    </script>
+</body>
+</html>

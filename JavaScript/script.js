@@ -1,10 +1,60 @@
 // Player class stats
 const classStats = {
-    Warrior: { HP: 100, ATK: 10, DEF: 5, SPD: 3, RANGE: 3 },
-    Archer:  { HP: 80,  ATK: 15, DEF: 3, SPD: 5, RANGE: 12 },
-    Mage:    { HP: 70,  ATK: 20, DEF: 2, SPD: 4, RANGE: 15 },
-    Priest:  { HP: 90,  ATK: 2,  DEF: 6, SPD: 3, RANGE: 10, HEAL: 12, AURA: 5 },
-    Boxer:   { HP: 110, ATK: 12, DEF: 7, SPD: 4, RANGE: 2 }
+    Warrior: { 
+        HP: 100, ATK: 10, DEF: 5, SPD: 3, RANGE: 3,
+        level: 1,
+        statGrowth: { HP: 10, ATK: 2, DEF: 1, SPD: 0.2 },
+        special: {
+            name: "Berserk",
+            description: "Increases ATK when HP is low",
+            trigger: stats => stats.HP < stats.maxHP * 0.3,
+            effect: stats => ({ ATK: stats.ATK * 1.5 })
+        }
+    },
+    Archer: { 
+        HP: 80, ATK: 15, DEF: 3, SPD: 5, RANGE: 12,
+        level: 1,
+        statGrowth: { HP: 7, ATK: 3, DEF: 0.5, SPD: 0.3 },
+        special: {
+            name: "Precise Shot",
+            description: "Chance to deal critical damage",
+            trigger: () => Math.random() < 0.2,
+            effect: stats => ({ ATK: stats.ATK * 2 })
+        }
+    },
+    Mage: { 
+        HP: 70, ATK: 20, DEF: 2, SPD: 4, RANGE: 15,
+        level: 1,
+        statGrowth: { HP: 5, ATK: 4, DEF: 0.3, SPD: 0.2 },
+        special: {
+            name: "Arcane Burst",
+            description: "Periodic AoE damage",
+            trigger: () => true,
+            effect: stats => ({ AOE: true, RANGE: stats.RANGE * 1.5 })
+        }
+    },
+    Priest: { 
+        HP: 90, ATK: 2, DEF: 6, SPD: 3, RANGE: 10, HEAL: 12, AURA: 5,
+        level: 1,
+        statGrowth: { HP: 8, HEAL: 2, DEF: 1, SPD: 0.2, AURA: 0.5 },
+        special: {
+            name: "Divine Blessing",
+            description: "Heals allies and boosts their stats",
+            trigger: () => true,
+            effect: stats => ({ HEAL: stats.HEAL * 1.2, AURA: stats.AURA * 1.2 })
+        }
+    },
+    Boxer: { 
+        HP: 110, ATK: 12, DEF: 7, SPD: 4, RANGE: 2,
+        level: 1,
+        statGrowth: { HP: 12, ATK: 2.5, DEF: 1.5, SPD: 0.4 },
+        special: {
+            name: "Combo Strike",
+            description: "Consecutive hits increase damage",
+            trigger: (stats, hits) => hits > 0,
+            effect: (stats, hits) => ({ ATK: stats.ATK * (1 + hits * 0.1) })
+        }
+    }
 };
 
 // Test that script is loading
@@ -40,6 +90,12 @@ function updatePlayerCard(card, className) {
     }
 
     debugLog(`Updating player card to class: ${className}`, 'info');
+    
+    // Initialize current HP if not set
+    if (!stats.currentHP) {
+        stats.currentHP = stats.HP;
+    }
+    
     let auraBonus = 0;
     // Priest aura: if any other player in the same region is a Priest, add aura
     if (className !== 'Priest') {
@@ -76,66 +132,6 @@ function updatePlayerCard(card, className) {
             return;
         }
 
-        statDivs[0].querySelector('span').textContent = stats.HP;
-        // Priest shows HEAL instead of ATK
-        if (className === 'Priest') {
-            statDivs[1].querySelector('span').textContent = `Heal: ${stats.HEAL}`;
-        } else {
-            statDivs[1].querySelector('span').textContent = stats.ATK + (auraBonus ? ` (+${auraBonus})` : '');
-        }
-        statDivs[2].querySelector('span').textContent = stats.DEF;
-        statDivs[3].querySelector('span').textContent = stats.SPD;
-        statDivs[4].querySelector('span').textContent = stats.RANGE;
-
-        debugLog(`Stats updated successfully`, 'success');
-        // Update corresponding stick figure
-        updateStickFigure(card, className, stats);
-
-    } catch (error) {
-        debugLog(`ERROR updating player card: ${error.message}`, 'error');
-    }
-}
-
-function updateStickFigure(card, className, stats) {
-    // Find which player this is (1-4)
-    const playerCards = document.querySelectorAll('.player-card');
-    let playerIndex = -1;
-    playerCards.forEach((pCard, index) => {
-        if (pCard === card) {
-            playerIndex = index + 1;
-        }
-    });
-
-    if (playerIndex === -1) {
-        debugLog('ERROR: Could not find player index for stick figure update', 'error');
-        return;
-    }
-
-    const stickFigure = document.getElementById(`player${playerIndex}`);
-    if (!stickFigure) {
-        debugLog(`ERROR: Could not find stick figure for player ${playerIndex}`, 'error');
-        return;
-    }
-
-    debugLog(`Updating stick figure for player ${playerIndex} with class ${className}`, 'info');
-    // Remove all previous class styling
-    stickFigure.classList.remove('warrior', 'archer', 'mage', 'priest', 'boxer');
-    stickFigure.classList.remove('warrior-style', 'archer-style', 'mage-style', 'priest-style', 'boxer-style');
-    // Add class-specific styling
-    if (className && className !== 'None') {
-        const classLower = className.toLowerCase();
-        stickFigure.classList.add(classLower);
-        debugLog(`Added class: ${classLower}`, 'info');
-    }
-    // Apply speed-based animation speed
-    const animationSpeed = Math.max(0.5, 2 - (stats.SPD * 0.02));
-    stickFigure.style.animationDuration = `${animationSpeed}s`;
-    // Apply size based on overall stats (bigger = stronger overall)
-    const totalStats = (stats.HP + stats.ATK + stats.DEF + stats.SPD + stats.RANGE) / 5;
-    const scale = 0.8 + (totalStats / 150);
-    stickFigure.style.transform = `scale(${scale})`;
-
-    debugLog(`Stick figure updated: ${className} with scale ${scale.toFixed(2)} and animation speed ${animationSpeed.toFixed(1)}s`, 'success');
 }
 
 // (rest of your code continues unchanged, except remove all conflict markers and ensure all functions are properly closed)

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stick Ranger v3</title>
-    <link rel="stylesheet" href="../CSS/style_v3.css">
+    <link rel="stylesheet" href="../CSS/style_v3_clean.css">
+    <script src="../test_suite.js"></script>
 </head>
 <body>
     <div class="game-container">
@@ -106,8 +107,9 @@
                 <div class="player-card">
                     <h3>Player 1</h3>
                     <div class="card-tabs">
-                        <button class="tab-btn active">Class</button>
-                        <button class="tab-btn">Equipment</button>
+                        <button class="tab-btn active" onclick="switchTab(this, 0)">Class</button>
+                        <button class="tab-btn" onclick="switchTab(this, 1)">Equipment</button>
+                        <button class="tab-btn" onclick="switchTab(this, 2)">Inventory</button>
                     </div>
                     <div class="tab-content active">
                         <div class="player-class">Warrior</div>
@@ -142,13 +144,28 @@
                             <div>RNG: +0</div>
                         </div>
                     </div>
+                    <div class="tab-content">
+                        <div class="inventory-grid">
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                        </div>
+                    </div>
                 </div>
                 <!-- Player 2 -->
                 <div class="player-card">
                     <h3>Player 2</h3>
                     <div class="card-tabs">
-                        <button class="tab-btn active">Class</button>
-                        <button class="tab-btn">Equipment</button>
+                        <button class="tab-btn active" onclick="switchTab(this, 0)">Class</button>
+                        <button class="tab-btn" onclick="switchTab(this, 1)">Equipment</button>
+                        <button class="tab-btn" onclick="switchTab(this, 2)">Inventory</button>
                     </div>
                     <div class="tab-content active">
                         <div class="player-class">Archer</div>
@@ -183,13 +200,28 @@
                             <div>RNG: +0</div>
                         </div>
                     </div>
+                    <div class="tab-content">
+                        <div class="inventory-grid">
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            class="inventory-slot" title="Empty slot"></div>
+                        </div>
+                    </div>
                 </div>
                 <!-- Player 3 -->
                 <div class="player-card">
                     <h3>Player 3</h3>
                     <div class="card-tabs">
-                        <button class="tab-btn active">Class</button>
-                        <button class="tab-btn">Equipment</button>
+                        <button class="tab-btn active" onclick="switchTab(this, 0)">Class</button>
+                        <button class="tab-btn" onclick="switchTab(this, 1)">Equipment</button>
+                        <button class="tab-btn" onclick="switchTab(this, 2)">Inventory</button>
                     </div>
                     <div class="tab-content active">
                         <div class="player-class">Mage</div>
@@ -224,13 +256,28 @@
                             <div>RNG: +0</div>
                         </div>
                     </div>
+                    <div class="tab-content">
+                        <div class="inventory-grid">
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                        </div>
+                    </div>
                 </div>
                 <!-- Player 4 -->
                 <div class="player-card">
                     <h3>Player 4</h3>
                     <div class="card-tabs">
-                        <button class="tab-btn active">Class</button>
-                        <button class="tab-btn">Equipment</button>
+                        <button class="tab-btn active" onclick="switchTab(this, 0)">Class</button>
+                        <button class="tab-btn" onclick="switchTab(this, 1)">Equipment</button>
+                        <button class="tab-btn" onclick="switchTab(this, 2)">Inventory</button>
                     </div>
                     <div class="tab-content active">
                         <div class="player-class">Priest</div>
@@ -263,6 +310,20 @@
                             <div>SPD: +0</div>
                             <div>HP: +0</div>
                             <div>RNG: +0</div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="inventory-grid">
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
+                            <div class="inventory-slot" title="Empty slot"></div>
                         </div>
                     </div>
                 </div>
@@ -342,5 +403,36 @@
         </div>
     </div>
     <script src="../JavaScript/script_v4.js"></script>
+    <script src="../wireframe_test.js"></script>
+    <script src="../spacing_verify.js"></script>
+    <script>
+    // Add event listeners for UI elements
+    const autoBattleToggle = document.getElementById('auto-battle');
+    const gameSpeedSlider = document.getElementById('game-speed');
+    const damageMultiplierSlider = document.getElementById('damage-multiplier');
+
+    // Auto Battle Toggle
+    if (autoBattleToggle) {
+        autoBattleToggle.addEventListener('change', () => {
+            console.log(`Auto Battle: ${autoBattleToggle.checked ? 'ON' : 'OFF'}`);
+        });
+    }
+
+    // Game Speed Slider
+    if (gameSpeedSlider) {
+        gameSpeedSlider.addEventListener('input', () => {
+            const speedValue = document.getElementById('speed-value');
+            if (speedValue) speedValue.textContent = `${gameSpeedSlider.value}x`;
+        });
+    }
+
+    // Damage Multiplier Slider
+    if (damageMultiplierSlider) {
+        damageMultiplierSlider.addEventListener('input', () => {
+            const damageValue = document.getElementById('damage-value');
+            if (damageValue) damageValue.textContent = `${damageMultiplierSlider.value}x`;
+        });
+    }
+    </script>
 </body>
 </html>
