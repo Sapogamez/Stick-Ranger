@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Game Systems Demo - Stick Ranger</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .demo-section {
+            background: #2a2a2a;
+            border: 2px solid #00ff00;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .demo-title {
+            color: #00ffff;
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #00ffff;
+            padding-bottom: 5px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .stat-item {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #00ff00;
+        }
+        .controls {
+            margin: 15px 0;
+        }
+        button {
+            background: #333;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        button:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        .output {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success { color: #00ff00; }
+        .error { color: #ff4444; }
+        .info { color: #ffff44; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Advanced Game Systems Demo - Stick Ranger</h1>
+        <p>Interactive demonstration of the new advanced game systems and optimization features.</p>
+
+        <!-- Level Generation System -->
+        <div class="demo-section">
+            <div class="demo-title">📍 Enhanced Level Generation System</div>
+            <div class="controls">
+                <button onclick="generateLevel()">Generate New Level</button>
+                <button onclick="generateBossLevel()">Generate Boss Level</button>
+            </div>
+            <div class="stats" id="levelStats"></div>
+            <div class="output" id="levelOutput"></div>
+        </div>
+
+        <!-- Combat System -->
+        <div class="demo-section">
+            <div class="demo-title">⚔️ Advanced Combat Mechanics</div>
+            <div class="controls">
+                <button onclick="simulateCombat()">Simulate Combat</button>
+                <button onclick="testDamageTypes()">Test Damage Types</button>
+                <button onclick="showComboSystem()">Demo Combo System</button>
+            </div>
+            <div class="stats" id="combatStats"></div>
+            <div class="output" id="combatOutput"></div>
+        </div>
+
+        <!-- Save System -->
+        <div class="demo-section">
+            <div class="demo-title">💾 Robust Save System with Cloud Backup</div>
+            <div class="controls">
+                <button onclick="createSave()">Create Save</button>
+                <button onclick="loadSave()">Load Save</button>
+                <button onclick="exportSave()">Export Save</button>
+                <button onclick="showCloudSaves()">Show Cloud Saves</button>
+            </div>
+            <div class="stats" id="saveStats"></div>
+            <div class="output" id="saveOutput"></div>
+        </div>
+
+        <!-- Analytics -->
+        <div class="demo-section">
+            <div class="demo-title">📊 Analytics and Metrics Tracking</div>
+            <div class="controls">
+                <button onclick="trackEvents()">Track Sample Events</button>
+                <button onclick="showAnalytics()">Show Analytics Report</button>
+                <button onclick="showPerformance()">Performance Metrics</button>
+            </div>
+            <div class="stats" id="analyticsStats"></div>
+            <div class="output" id="analyticsOutput"></div>
+        </div>
+
+        <!-- Object Pooling -->
+        <div class="demo-section">
+            <div class="demo-title">🔄 Performance Optimization with Object Pooling</div>
+            <div class="controls">
+                <button onclick="demonstratePooling()">Demo Object Pooling</button>
+                <button onclick="stressTestPools()">Stress Test Pools</button>
+                <button onclick="showPoolStats()">Show Pool Statistics</button>
+            </div>
+            <div class="stats" id="poolingStats"></div>
+            <div class="output" id="poolingOutput"></div>
+        </div>
+
+        <!-- Networking -->
+        <div class="demo-section">
+            <div class="demo-title">🌐 Networking Foundation for Multiplayer</div>
+            <div class="controls">
+                <button onclick="createRoom()">Create Room</button>
+                <button onclick="simulateMessages()">Simulate Messages</button>
+                <button onclick="showNetworkStats()">Network Statistics</button>
+            </div>
+            <div class="stats" id="networkingStats"></div>
+            <div class="output" id="networkingOutput"></div>
+        </div>
+
+        <!-- Testing Tools -->
+        <div class="demo-section">
+            <div class="demo-title">🧪 Advanced Testing Tools</div>
+            <div class="controls">
+                <button onclick="runQuickTests()">Run Quick Tests</button>
+                <button onclick="runPerformanceTest()">Performance Test</button>
+                <button onclick="showTestReport()">Show Test Report</button>
+            </div>
+            <div class="stats" id="testingStats"></div>
+            <div class="output" id="testingOutput"></div>
+        </div>
+    </div>
+
+    <!-- Load the compiled JavaScript systems -->
+    <script src="dist/types/game.js"></script>
+    <script src="dist/systems/LevelGenerator.js"></script>
+    <script src="dist/systems/CombatSystem.js"></script>
+    <script src="dist/systems/SaveSystem.js"></script>
+    <script src="dist/systems/AnalyticsSystem.js"></script>
+    <script src="dist/systems/ObjectPoolManager.js"></script>
+    <script src="dist/systems/NetworkProtocol.js"></script>
+    <script src="dist/systems/TestingToolkit.js"></script>
+
+    <script>
+        // Initialize systems
+        let levelGenerator, combatSystem, saveSystem, analytics, poolManager, network, testingToolkit;
+        
+        // Wait for page load and initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                levelGenerator = LevelGenerator.getInstance();
+                combatSystem = new CombatSystem();
+                saveSystem = SaveSystem.getInstance();
+                analytics = AnalyticsSystem.getInstance();
+                poolManager = ObjectPoolManager.getInstance();
+                network = NetworkProtocol.getInstance();
+                testingToolkit = TestingToolkit.getInstance();
+                
+                log('Systems initialized successfully!', 'success');
+            } catch (error) {
+                log('Error initializing systems: ' + error.message, 'error');
+            }
+        });
+
+        function log(message, type = 'info') {
+            console.log(message);
+        }
+
+        function updateStats(sectionId, stats) {
+            const container = document.getElementById(sectionId);
+            if (!container) return;
+            
+            container.innerHTML = Object.entries(stats).map(([key, value]) => 
+                `<div class="stat-item"><strong>${key}:</strong> ${value}</div>`
+            ).join('');
+        }
+
+        function updateOutput(outputId, text, type = 'info') {
+            const output = document.getElementById(outputId);
+            if (!output) return;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            output.innerHTML += `<span class="${className}">[${timestamp}] ${text}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        // Level Generation Functions
+        function generateLevel() {
+            try {
+                const level = Math.floor(Math.random() * 20) + 1;
+                const levelConfig = levelGenerator.generateLevel(level);
+                const enemies = levelGenerator.generateEnemies(levelConfig);
+                
+                updateStats('levelStats', {
+                    'Level': levelConfig.id,
+                    'Difficulty': levelConfig.difficulty,
+                    'Enemy Count': levelConfig.enemyCount,
+                    'Terrain': levelConfig.terrain.type,
+                    'Obstacles': levelConfig.terrain.obstacles.length,
+                    'Spawn Points': levelConfig.terrain.spawnPoints.length,
+                    'Special Features': levelConfig.specialFeatures?.length || 0
+                });
+                
+                updateOutput('levelOutput', `Generated Level ${level}: ${levelConfig.terrain.type} with ${enemies.length} enemies`, 'success');
+            } catch (error) {
+                updateOutput('levelOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function generateBossLevel() {
+            try {
+                const bossLevel = 10 + Math.floor(Math.random() * 5) * 10; // 10, 20, 30, 40, or 50
+                const levelConfig = levelGenerator.generateLevel(bossLevel);
+                const hasBoss = levelConfig.specialFeatures?.some(f => f.type === 'boss_area');
+                
+                updateStats('levelStats', {
+                    'Boss Level': levelConfig.id,
+                    'Difficulty': levelConfig.difficulty,
+                    'Has Boss': hasBoss ? 'Yes' : 'No',
+                    'Enemy Count': levelConfig.enemyCount,
+                    'Terrain': levelConfig.terrain.type
+                });
+                
+                updateOutput('levelOutput', `Generated Boss Level ${bossLevel}: ${hasBoss ? 'Boss area detected!' : 'No boss area'}`, 'success');
+            } catch (error) {
+                updateOutput('levelOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        // Combat Functions
+        function simulateCombat() {
+            try {
+                const player = createTestPlayer();
+                const enemy = createTestEnemy();
+                
+                const damage = combatSystem.calculateDamage(player, enemy);
+                const result = combatSystem.executeAttack(player, enemy);
+                
+                updateStats('combatStats', {
+                    'Damage Dealt': result.damage.amount,
+                    'Critical Hit': result.damage.isCritical ? 'Yes' : 'No',
+                    'Damage Type': result.damage.type,
+                    'Status Effects': result.statusEffects.length,
+                    'Enemy Health': enemy.health
+                });
+                
+                updateOutput('combatOutput', `Combat: ${result.damage.amount} ${result.damage.type} damage ${result.damage.isCritical ? '(CRIT!)' : ''}`, 'success');
+            } catch (error) {
+                updateOutput('combatOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function testDamageTypes() {
+            try {
+                const player = createTestPlayer();
+                const enemy = createTestEnemy();
+                const damageTypes = ['physical', 'magical', 'fire', 'ice', 'lightning'];
+                
+                damageTypes.forEach(type => {
+                    const skill = { id: type, name: `${type} attack`, cooldown: 1000, manaCost: 10 };
+                    const damage = combatSystem.calculateDamage(player, enemy, skill);
+                    updateOutput('combatOutput', `${type}: ${damage.amount} damage`, 'info');
+                });
+            } catch (error) {
+                updateOutput('combatOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showComboSystem() {
+            updateOutput('combatOutput', 'Combo system tracks consecutive attacks within 2 seconds for damage multipliers', 'info');
+        }
+
+        // Save System Functions
+        function createSave() {
+            try {
+                const gameData = createTestSaveData();
+                saveSystem.saveGame(gameData).then(success => {
+                    updateStats('saveStats', {
+                        'Save Status': success ? 'Success' : 'Failed',
+                        'Version': '1.0.0',
+                        'Players': gameData.playerData.length,
+                        'Current Level': gameData.gameState.currentLevel
+                    });
+                    
+                    updateOutput('saveOutput', success ? 'Game saved successfully!' : 'Save failed', success ? 'success' : 'error');
+                });
+            } catch (error) {
+                updateOutput('saveOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function loadSave() {
+            try {
+                saveSystem.loadGame().then(saveData => {
+                    if (saveData) {
+                        updateStats('saveStats', {
+                            'Loaded Version': saveData.version,
+                            'Players': saveData.playerData.length,
+                            'Current Level': saveData.gameState.currentLevel,
+                            'Total Kills': saveData.statistics.totalKills
+                        });
+                        updateOutput('saveOutput', 'Save loaded successfully!', 'success');
+                    } else {
+                        updateOutput('saveOutput', 'No save data found', 'error');
+                    }
+                });
+            } catch (error) {
+                updateOutput('saveOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function exportSave() {
+            try {
+                const exported = saveSystem.exportSave();
+                if (exported) {
+                    updateOutput('saveOutput', `Exported save data (${exported.length} characters)`, 'success');
+                    updateOutput('saveOutput', exported.substring(0, 100) + '...', 'info');
+                } else {
+                    updateOutput('saveOutput', 'No save data to export', 'error');
+                }
+            } catch (error) {
+                updateOutput('saveOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showCloudSaves() {
+            try {
+                saveSystem.getCloudSaves().then(saves => {
+                    updateStats('saveStats', {
+                        'Cloud Saves': saves.length,
+                        'Max Saves': 5,
+                        'Latest Save': saves.length > 0 ? new Date(saves[0].timestamp).toLocaleString() : 'None'
+                    });
+                    updateOutput('saveOutput', `Found ${saves.length} cloud saves`, 'info');
+                });
+            } catch (error) {
+                updateOutput('saveOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        // Analytics Functions
+        function trackEvents() {
+            try {
+                analytics.trackEvent('game_start', { timestamp: Date.now() });
+                analytics.trackEvent('level_start', { level: 1 });
+                analytics.trackEvent('enemy_kill', { enemyType: 'Goblin', damage: 25 });
+                analytics.trackEvent('skill_use', { skillName: 'Fireball', manaCost: 20 });
+                analytics.trackEvent('level_complete', { level: 1, time: 120000 });
+                
+                updateOutput('analyticsOutput', 'Tracked 5 sample events', 'success');
+            } catch (error) {
+                updateOutput('analyticsOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showAnalytics() {
+            try {
+                const report = analytics.getSessionReport();
+                
+                updateStats('analyticsStats', {
+                    'Events Tracked': report.events.length,
+                    'Session Duration': Math.round(report.sessionInfo.duration / 1000) + 's',
+                    'Enemies Defeated': report.gameMetrics.enemiesDefeated,
+                    'Skills Used': report.gameMetrics.skillsUsed
+                });
+                
+                updateOutput('analyticsOutput', `Analytics report: ${report.events.length} events tracked`, 'success');
+            } catch (error) {
+                updateOutput('analyticsOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showPerformance() {
+            try {
+                analytics.trackPerformance({
+                    fps: 60,
+                    frameTime: 16.67,
+                    memoryUsage: 45.2,
+                    renderTime: 8.3,
+                    updateTime: 4.1
+                });
+                
+                const perfSummary = analytics.getPerformanceSummary();
+                
+                updateStats('analyticsStats', {
+                    'Average FPS': perfSummary.averageFPS,
+                    'Average Frame Time': perfSummary.averageFrameTime + 'ms',
+                    'Memory Usage': perfSummary.averageMemoryUsage + 'MB',
+                    'Performance Issues': perfSummary.performanceIssues
+                });
+                
+                updateOutput('analyticsOutput', 'Performance metrics updated', 'success');
+            } catch (error) {
+                updateOutput('analyticsOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        // Object Pooling Functions
+        function demonstratePooling() {
+            try {
+                const projectiles = [];
+                for (let i = 0; i < 5; i++) {
+                    const projectile = poolManager.getProjectile();
+                    if (projectile) {
+                        projectile.initialize(100 + i * 20, 200, 5, 0, 10, 'arrow', 1);
+                        projectiles.push(projectile);
+                    }
+                }
+                
+                updateOutput('poolingOutput', `Acquired ${projectiles.length} projectiles from pool`, 'success');
+                
+                // Release them
+                projectiles.forEach(p => poolManager.releaseProjectile(p));
+                updateOutput('poolingOutput', 'Released all projectiles back to pool', 'info');
+            } catch (error) {
+                updateOutput('poolingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function stressTestPools() {
+            try {
+                const startTime = performance.now();
+                
+                for (let i = 0; i < 100; i++) {
+                    const projectile = poolManager.getProjectile();
+                    const effect = poolManager.getEffect();
+                    const damageNumber = poolManager.getDamageNumber();
+                    
+                    if (projectile) poolManager.releaseProjectile(projectile);
+                    if (effect) poolManager.releaseEffect(effect);
+                    if (damageNumber) poolManager.releaseDamageNumber(damageNumber);
+                }
+                
+                const duration = performance.now() - startTime;
+                updateOutput('poolingOutput', `Stress test: 300 operations in ${duration.toFixed(2)}ms`, 'success');
+            } catch (error) {
+                updateOutput('poolingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showPoolStats() {
+            try {
+                const stats = poolManager.getPoolStats();
+                
+                updateStats('poolingStats', {
+                    'Projectile Pool': `${stats.projectiles.inUse}/${stats.projectiles.totalCreated}`,
+                    'Effect Pool': `${stats.effects.inUse}/${stats.effects.totalCreated}`,
+                    'Damage Pool': `${stats.damageNumbers.inUse}/${stats.damageNumbers.totalCreated}`,
+                    'Total Objects': stats.projectiles.totalCreated + stats.effects.totalCreated + stats.damageNumbers.totalCreated
+                });
+                
+                updateOutput('poolingOutput', 'Pool statistics updated', 'info');
+            } catch (error) {
+                updateOutput('poolingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        // Networking Functions
+        function createRoom() {
+            try {
+                network.createRoom().then(roomId => {
+                    updateStats('networkingStats', {
+                        'Room ID': roomId,
+                        'Is Host': network.isHostPlayer() ? 'Yes' : 'No',
+                        'Connections': network.getConnectionCount(),
+                        'Player ID': network.getLocalPlayerId().substring(0, 12) + '...'
+                    });
+                    
+                    updateOutput('networkingOutput', `Created room: ${roomId}`, 'success');
+                });
+            } catch (error) {
+                updateOutput('networkingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function simulateMessages() {
+            try {
+                network.sendMessage('game_event', { action: 'test_message', data: 'Hello World' });
+                network.sendPlayerAction('move', { x: 100, y: 200 });
+                network.processMessages();
+                
+                updateOutput('networkingOutput', 'Sent test messages and processed queue', 'success');
+            } catch (error) {
+                updateOutput('networkingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showNetworkStats() {
+            try {
+                const stats = network.getNetworkStats();
+                
+                updateStats('networkingStats', {
+                    'Connections': stats.connections,
+                    'Average Latency': stats.avgLatency + 'ms',
+                    'Messages Processed': stats.messagesProcessed,
+                    'Sync Frame': stats.syncFrame,
+                    'Is Host': stats.isHost ? 'Yes' : 'No'
+                });
+                
+                updateOutput('networkingOutput', 'Network statistics updated', 'info');
+            } catch (error) {
+                updateOutput('networkingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        // Testing Functions
+        function runQuickTests() {
+            try {
+                const tests = [
+                    { name: 'Math Test', test: () => { if (2 + 2 !== 4) throw new Error('Math broken'); } },
+                    { name: 'Array Test', test: () => { if ([1,2,3].length !== 3) throw new Error('Array broken'); } },
+                    { name: 'Object Test', test: () => { if (typeof {} !== 'object') throw new Error('Object broken'); } }
+                ];
+                
+                testingToolkit.runTestSuite(tests).then(results => {
+                    const passed = results.filter(r => r.passed).length;
+                    
+                    updateStats('testingStats', {
+                        'Tests Run': results.length,
+                        'Passed': passed,
+                        'Failed': results.length - passed,
+                        'Success Rate': Math.round((passed / results.length) * 100) + '%'
+                    });
+                    
+                    updateOutput('testingOutput', `Quick tests completed: ${passed}/${results.length} passed`, 'success');
+                });
+            } catch (error) {
+                updateOutput('testingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function runPerformanceTest() {
+            try {
+                const thresholds = { minFPS: 30, maxFrameTime: 50, maxMemoryUsage: 100 };
+                
+                testingToolkit.runPerformanceTest(
+                    'Demo Performance Test',
+                    () => {
+                        // Simulate some work
+                        for (let i = 0; i < 1000; i++) {
+                            Math.random() * Math.random();
+                        }
+                    },
+                    thresholds,
+                    2000 // 2 second test
+                ).then(result => {
+                    updateStats('testingStats', {
+                        'Average FPS': result.metrics.avgFPS,
+                        'Min FPS': result.metrics.minFPS,
+                        'Frame Time': result.metrics.avgFrameTime + 'ms',
+                        'Test Passed': result.passed ? 'Yes' : 'No'
+                    });
+                    
+                    updateOutput('testingOutput', `Performance test: ${result.passed ? 'PASSED' : 'FAILED'}`, result.passed ? 'success' : 'error');
+                });
+            } catch (error) {
+                updateOutput('testingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        function showTestReport() {
+            try {
+                const report = testingToolkit.generateTestReport();
+                
+                updateStats('testingStats', {
+                    'Total Tests': report.summary.totalTests,
+                    'Passed': report.summary.passed,
+                    'Failed': report.summary.failed,
+                    'Success Rate': report.summary.successRate + '%',
+                    'Total Duration': report.summary.totalDuration.toFixed(2) + 'ms'
+                });
+                
+                updateOutput('testingOutput', `Test report: ${report.summary.successRate}% success rate`, 'info');
+            } catch (error) {
+                updateOutput('testingOutput', 'Error: ' + error.message, 'error');
+            }
+        }
+
+        // Helper functions to create test data
+        function createTestPlayer() {
+            return {
+                id: 1,
+                class: 'Warrior',
+                stats: { hp: 100, maxHp: 100, atk: 20, def: 10, spd: 5, range: 30, mana: 50 },
+                position: { x: 100, y: 100 },
+                equipment: { weapon: 'sword', armor: 'leather', accessory: 'ring', boots: 'boots' },
+                skills: [{ id: 'slash', name: 'Slash', cooldown: 1000, manaCost: 10 }]
+            };
+        }
+
+        function createTestEnemy() {
+            return {
+                id: 1,
+                type: 'Goblin',
+                health: 50,
+                position: { x: 150, y: 100 },
+                ai: 'Aggressive'
+            };
+        }
+
+        function createTestSaveData() {
+            return {
+                playerData: [createTestPlayer()],
+                gameState: {
+                    currentLevel: 5,
+                    completedLevels: [1, 2, 3, 4],
+                    totalPlayTime: 12345,
+                    settings: {
+                        autoAttackEnabled: true,
+                        soundEnabled: true,
+                        musicVolume: 0.8,
+                        effectsVolume: 0.9,
+                        graphicsQuality: 'high'
+                    }
+                },
+                statistics: {
+                    totalKills: 150,
+                    totalDamageDealt: 5000,
+                    totalDamageTaken: 2000,
+                    levelsCompleted: 4,
+                    itemsCollected: 25,
+                    playtimeSeconds: 12345
+                }
+            };
+        }
+    </script>
+</body>
+</html>
