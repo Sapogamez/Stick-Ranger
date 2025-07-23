@@ -16,11 +16,39 @@ Stick Ranger is a tactical RPG where players control stick figure characters thr
 ### Installation
 ```bash
 npm install
-npx tsc  # Compile TypeScript
+```
+
+### Building
+```bash
+npm run build
 ```
 
 ### Running the Game
+
+#### Canvas Version (New)
+The new TypeScript/React implementation with canvas rendering:
+```bash
+npm start  # Run the compiled game
+# Or for development:
+npm run dev  # Watch mode for development
+```
+
+#### HTML Version (Legacy)
 Open `HTML/index.html` in a web browser or serve via a local development server.
+
+### Game Infrastructure
+
+The game now features a complete TypeScript-based engine with:
+
+- **Canvas Rendering**: Hardware-accelerated 2D rendering with the Canvas API
+- **Game Loop**: Fixed timestep game loop with FPS monitoring and debug controls
+- **Entity System**: Complete Entity-Component-System architecture for game objects
+- **React Integration**: React components for UI and game integration
+- **TypeScript**: Full type safety with strict mode enabled
+
+#### Debug Controls
+- **Space**: Pause/Resume game
+- **1-5**: Time scale control (0.1x to 5x speed)
 
 ## 🏗️ Architecture
 
@@ -36,14 +64,17 @@ This project uses a modern Entity-Component-System (ECS) architecture with the f
 
 ```
 src/
-├── components/     # React components for UI
-├── systems/        # Game systems (Combat, AI, Physics, etc.)
-├── types/          # TypeScript type definitions
-└── tests/          # Unit and integration tests
+├── components/       # React components for UI (including Game.tsx)
+├── engine/          # Core game engine (GameLoop.ts, Canvas.ts)
+├── systems/         # Game systems (Combat, AI, Physics, EntitySystem.ts)
+├── types/           # TypeScript type definitions
+├── tests/           # Unit and integration tests
+└── index.ts         # Main entry point
 
-HTML/               # Main game HTML files
-CSS/                # Stylesheets
-JavaScript/         # Legacy JavaScript files
+HTML/                # Legacy game HTML files
+CSS/                 # Stylesheets
+JavaScript/          # Legacy JavaScript files
+dist/                # Compiled TypeScript output
 ```
 
 ## 🎯 Character Classes

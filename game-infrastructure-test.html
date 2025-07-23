@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stick Ranger - Game Infrastructure Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .game-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Stick Ranger - Game Infrastructure</h1>
+        <p>TypeScript-based game engine with React integration</p>
+        
+        <div class="game-container">
+            <div id="react-game-mount"></div>
+            <canvas id="gameCanvas" width="800" height="600" style="border: 2px solid #333; background: #1a1a1a;"></canvas>
+        </div>
+        
+        <div style="margin: 20px 0; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <h3>🎯 Features Implemented:</h3>
+            <ul>
+                <li>✅ TypeScript configuration with strict mode</li>
+                <li>✅ React 19+ support with type definitions</li>
+                <li>✅ Canvas rendering engine</li>
+                <li>✅ Game loop with FPS monitoring</li>
+                <li>✅ Entity Component System architecture</li>
+                <li>✅ Build pipeline with npm scripts</li>
+                <li>✅ Debug controls and monitoring</li>
+            </ul>
+            
+            <h3>🎮 Debug Controls:</h3>
+            <ul>
+                <li><kbd>Space</kbd> - Pause/Resume game</li>
+                <li><kbd>1</kbd> - Time scale 0.1x</li>
+                <li><kbd>2</kbd> - Time scale 0.5x</li>
+                <li><kbd>3</kbd> - Time scale 1.0x (normal)</li>
+                <li><kbd>4</kbd> - Time scale 2.0x</li>
+                <li><kbd>5</kbd> - Time scale 5.0x</li>
+            </ul>
+            
+            <h3>📁 File Structure:</h3>
+            <pre style="text-align: left; background: #f5f5f5; padding: 10px; border-radius: 4px;">
+src/
+├── index.ts              # Main entry point
+├── engine/
+│   ├── GameLoop.ts      # Game loop with timing
+│   └── Canvas.ts        # Canvas rendering
+├── components/
+│   └── Game.tsx         # React game component
+└── systems/
+    └── EntitySystem.ts  # Entity management
+            </pre>
+        </div>
+    </div>
+
+    <!-- Load compiled game -->
+    <script src="dist/index.js"></script>
+</body>
+</html>
