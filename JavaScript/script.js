@@ -132,6 +132,16 @@ function updatePlayerCard(card, className) {
             return;
         }
 
+        // Update stat displays
+        if (statDivs[0]) statDivs[0].innerHTML = `HP: <span>${stats.HP}</span>`;
+        if (statDivs[1]) statDivs[1].innerHTML = `ATK: <span>${stats.ATK}</span>`;
+        if (statDivs[2]) statDivs[2].innerHTML = `DEF: <span>${stats.DEF}</span>`;
+        if (statDivs[3]) statDivs[3].innerHTML = `SPD: <span>${stats.SPD}</span>`;
+        if (statDivs[4]) statDivs[4].innerHTML = `RANGE: <span>${stats.RANGE}</span>`;
+        
+        debugLog('Player stats updated successfully', 'success');
+        
+    } catch (error) {
+        debugLog(`ERROR updating player stats: ${error.message}`, 'error');
+    }
 }
-
-// (rest of your code continues unchanged, except remove all conflict markers and ensure all functions are properly closed)
