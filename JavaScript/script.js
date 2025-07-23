@@ -1,10 +1,60 @@
 // Player class stats
 const classStats = {
-    Warrior: { HP: 100, ATK: 10, DEF: 5, SPD: 3, RANGE: 3 },
-    Archer:  { HP: 80,  ATK: 15, DEF: 3, SPD: 5, RANGE: 12 },
-    Mage:    { HP: 70,  ATK: 20, DEF: 2, SPD: 4, RANGE: 15 },
-    Priest:  { HP: 90,  ATK: 2,  DEF: 6, SPD: 3, RANGE: 10, HEAL: 12, AURA: 5 },
-    Boxer:   { HP: 110, ATK: 12, DEF: 7, SPD: 4, RANGE: 2 }
+    Warrior: { 
+        HP: 100, ATK: 10, DEF: 5, SPD: 3, RANGE: 3,
+        level: 1,
+        statGrowth: { HP: 10, ATK: 2, DEF: 1, SPD: 0.2 },
+        special: {
+            name: "Berserk",
+            description: "Increases ATK when HP is low",
+            trigger: stats => stats.HP < stats.maxHP * 0.3,
+            effect: stats => ({ ATK: stats.ATK * 1.5 })
+        }
+    },
+    Archer: { 
+        HP: 80, ATK: 15, DEF: 3, SPD: 5, RANGE: 12,
+        level: 1,
+        statGrowth: { HP: 7, ATK: 3, DEF: 0.5, SPD: 0.3 },
+        special: {
+            name: "Precise Shot",
+            description: "Chance to deal critical damage",
+            trigger: () => Math.random() < 0.2,
+            effect: stats => ({ ATK: stats.ATK * 2 })
+        }
+    },
+    Mage: { 
+        HP: 70, ATK: 20, DEF: 2, SPD: 4, RANGE: 15,
+        level: 1,
+        statGrowth: { HP: 5, ATK: 4, DEF: 0.3, SPD: 0.2 },
+        special: {
+            name: "Arcane Burst",
+            description: "Periodic AoE damage",
+            trigger: () => true,
+            effect: stats => ({ AOE: true, RANGE: stats.RANGE * 1.5 })
+        }
+    },
+    Priest: { 
+        HP: 90, ATK: 2, DEF: 6, SPD: 3, RANGE: 10, HEAL: 12, AURA: 5,
+        level: 1,
+        statGrowth: { HP: 8, HEAL: 2, DEF: 1, SPD: 0.2, AURA: 0.5 },
+        special: {
+            name: "Divine Blessing",
+            description: "Heals allies and boosts their stats",
+            trigger: () => true,
+            effect: stats => ({ HEAL: stats.HEAL * 1.2, AURA: stats.AURA * 1.2 })
+        }
+    },
+    Boxer: { 
+        HP: 110, ATK: 12, DEF: 7, SPD: 4, RANGE: 2,
+        level: 1,
+        statGrowth: { HP: 12, ATK: 2.5, DEF: 1.5, SPD: 0.4 },
+        special: {
+            name: "Combo Strike",
+            description: "Consecutive hits increase damage",
+            trigger: (stats, hits) => hits > 0,
+            effect: (stats, hits) => ({ ATK: stats.ATK * (1 + hits * 0.1) })
+        }
+    }
 };
 
 // Test that script is loading
@@ -44,6 +94,12 @@ function updatePlayerCard(card, className) {
     }
     
     debugLog(`Updating player card to class: ${className}`, 'info');
+    
+    // Initialize current HP if not set
+    if (!stats.currentHP) {
+        stats.currentHP = stats.HP;
+    }
+    
     let auraBonus = 0;
     // Priest aura: if any other player in the same region is a Priest, add aura
     if (className !== 'Priest') {
@@ -77,7 +133,27 @@ function updatePlayerCard(card, className) {
             return;
         }
         
-        statDivs[0].querySelector('span').textContent = stats.HP;
+        // Update HP with current/max format
+        statDivs[0].querySelector('span').textContent = `${stats.currentHP}/${stats.HP}`;
+        
+        // Add HP bar
+        const hpBar = card.querySelector('.hp-bar') || (() => {
+            const bar = document.createElement('div');
+            bar.className = 'hp-bar';
+            const fill = document.createElement('div');
+            fill.className = 'hp-fill';
+            bar.appendChild(fill);
+            card.insertBefore(bar, statDivs[0]);
+            return bar;
+        })();
+        
+        // Update HP bar
+        const hpPercent = (stats.currentHP / stats.HP) * 100;
+        hpBar.querySelector('.hp-fill').style.width = `${hpPercent}%`;
+        hpBar.querySelector('.hp-fill').style.backgroundColor = 
+            hpPercent > 50 ? '#2ecc71' :
+            hpPercent > 25 ? '#f1c40f' : '#e74c3c';
+        
         // Priest shows HEAL instead of ATK
         if (className === 'Priest') {
             statDivs[1].querySelector('span').textContent = `Heal: ${stats.HEAL}`;
@@ -467,6 +543,279 @@ function updateEnemyPosition(enemy) {
     enemy.element.style.top = enemy.y + '%';
 }
 
+function calculateDistance(element1, element2) {
+    const rect1 = element1.getBoundingClientRect();
+    const rect2 = element2.getBoundingClientRect();
+    
+    const x1 = rect1.left + rect1.width / 2;
+    const y1 = rect1.top + rect1.height / 2;
+    const x2 = rect2.left + rect2.width / 2;
+    const y2 = rect2.top + rect2.height / 2;
+    
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)) / 10; // Normalize distance
+}
+
+function findNearestEnemy(playerElement) {
+    let nearest = null;
+    let minDistance = Infinity;
+    
+    enemies.forEach(enemy => {
+        if (enemy.hp <= 0) return;
+        
+        const distance = calculateDistance(playerElement, enemy.element);
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearest = enemy;
+        }
+    });
+    
+    return nearest;
+}
+
+function calculatePlayerStats(playerId) {
+    const playerCard = document.querySelector(`#${playerId}-card`);
+    const playerClass = playerCard.querySelector('.player-class').textContent;
+    const baseStats = classStats[playerClass];
+    const level = baseStats.level;
+    
+    // Calculate grown stats
+    let stats = { ...baseStats };
+    Object.keys(baseStats.statGrowth).forEach(stat => {
+        stats[stat] += baseStats.statGrowth[stat] * (level - 1);
+    });
+    
+    // Apply special effects
+    if (baseStats.special.trigger(stats)) {
+        const effects = baseStats.special.effect(stats);
+        Object.assign(stats, effects);
+    }
+    
+    // Apply Priest aura if any
+    document.querySelectorAll('.player-card').forEach(card => {
+        if (card.id !== `${playerId}-card`) {
+            const otherClass = card.querySelector('.player-class').textContent;
+            if (otherClass === 'Priest') {
+                const priestStats = classStats.Priest;
+                stats.ATK += priestStats.AURA;
+                stats.DEF += Math.floor(priestStats.AURA / 2);
+            }
+        }
+    });
+    
+    return stats;
+}
+
+function attackEnemy(playerElement, enemy) {
+    const playerId = playerElement.id;
+    const stats = calculatePlayerStats(playerId);
+    
+    // Track consecutive hits for Boxer
+    if (!playerElement.consecutiveHits) {
+        playerElement.consecutiveHits = 0;
+    }
+    playerElement.consecutiveHits++;
+    
+    // Calculate damage with special effects
+    let damage = stats.ATK;
+    
+    // Apply class specials
+    const playerClass = document.querySelector(`#${playerId}-card .player-class`).textContent;
+    const classData = classStats[playerClass];
+    if (classData.special.trigger(stats, playerElement.consecutiveHits)) {
+        const effects = classData.special.effect(stats, playerElement.consecutiveHits);
+        if (effects.ATK) damage = effects.ATK;
+        
+        // Handle AoE damage for Mage
+        if (effects.AOE) {
+            const nearbyEnemies = enemies.filter(e => 
+                e !== enemy && 
+                calculateDistance(enemy.element, e.element) <= effects.RANGE
+            );
+            nearbyEnemies.forEach(nearby => {
+                const aoeDamage = Math.max(1, Math.floor(damage * 0.5) - nearby.def);
+                nearby.hp -= aoeDamage;
+                updateEnemyHealth(nearby);
+                addCombatLog(`${playerId}'s Arcane Burst dealt ${aoeDamage} damage to ${nearby.name}!`);
+            });
+        }
+    }
+    
+    // Apply final damage
+    damage = Math.max(1, damage - enemy.def);
+    enemy.hp -= damage;
+    
+    // Update enemy health bar
+    updateEnemyHealth(enemy);
+    
+    // Add combat log
+    addCombatLog(`${playerId} dealt ${damage} damage to ${enemy.name}!`);
+    
+    // If enemy defeated
+    if (enemy.hp <= 0) {
+        handleEnemyDefeat(enemy);
+        // Reset consecutive hits
+        playerElement.consecutiveHits = 0;
+        // Grant experience
+        grantExperience(playerId);
+    }
+}
+
+function grantExperience(playerId) {
+    const playerCard = document.querySelector(`#${playerId}-card`);
+    const playerClass = playerCard.querySelector('.player-class').textContent;
+    const classData = classStats[playerClass];
+    
+    // Calculate XP gained
+    const baseXP = 10;
+    const zoneMultiplier = {
+        plains: 1,
+        forest: 1.2,
+        mountains: 1.5,
+        desert: 1.8,
+        cave: 2
+    };
+    
+    const xpGained = Math.floor(baseXP * (zoneMultiplier[currentZone] || 1));
+    
+    // Add XP and check for level up
+    if (!classData.xp) classData.xp = 0;
+    classData.xp += xpGained;
+    
+    const xpNeeded = classData.level * 100;
+    if (classData.xp >= xpNeeded) {
+        classData.xp -= xpNeeded;
+        classData.level++;
+        
+        // Update stats
+        Object.keys(classData.statGrowth).forEach(stat => {
+            classData[stat] += classData.statGrowth[stat];
+        });
+        
+        // Update UI
+        updatePlayerCard(playerCard, playerClass);
+        addCombatLog(`${playerId} reached level ${classData.level}!`);
+        debugLog(`${playerId} leveled up to ${classData.level}`, 'success');
+    }
+    
+    addCombatLog(`${playerId} gained ${xpGained} XP!`);
+}
+
+function handleEnemyDefeat(enemy) {
+    enemy.element.classList.add('defeated');
+    addCombatLog(`${enemy.name} was defeated!`);
+    
+    // Check if all enemies are defeated
+    const remainingEnemies = enemies.filter(e => e.hp > 0);
+    if (remainingEnemies.length === 0) {
+        handleZoneCleared();
+    }
+}
+
+function handleZoneCleared() {
+    addCombatLog(`${currentZone} zone cleared!`);
+    debugLog(`Zone cleared: ${currentZone}`, 'success');
+    
+    // Generate new enemies after a delay
+    setTimeout(() => {
+        spawnEnemies(currentZone);
+    }, 2000);
+}
+
+function moveTowardsTarget(element, target, speed) {
+    const rect1 = element.getBoundingClientRect();
+    const rect2 = target.getBoundingClientRect();
+    
+    // Calculate movement direction
+    const dx = rect2.left - rect1.left;
+    const dy = rect2.top - rect1.top;
+    const length = Math.sqrt(dx * dx + dy * dy);
+    
+    // Update position
+    const currentX = parseFloat(element.style.left) || 50;
+    const currentY = parseFloat(element.style.top) || 50;
+    
+    const newX = currentX + (dx / length) * speed;
+    const newY = currentY + (dy / length) * speed;
+    
+    // Keep within bounds (10-90%)
+    element.style.left = Math.min(Math.max(10, newX), 90) + '%';
+    element.style.top = Math.min(Math.max(20, newY), 80) + '%';
+}
+
+function healPlayer(playerId, healAmount) {
+    const playerCard = document.querySelector(`#${playerId}-card`);
+    const playerClass = playerCard.querySelector('.player-class').textContent;
+    const stats = classStats[playerClass];
+    
+    if (!stats.currentHP) stats.currentHP = stats.HP;
+    stats.currentHP = Math.min(stats.HP, stats.currentHP + healAmount);
+    
+    // Update UI
+    updatePlayerCard(playerCard, playerClass);
+    addCombatLog(`${playerId} was healed for ${healAmount} HP!`);
+}
+
+function cleanupDefeatedEnemies() {
+    enemies = enemies.filter(enemy => {
+        if (enemy.hp <= 0 && !enemy.element.classList.contains('removing')) {
+            enemy.element.classList.add('removing');
+            setTimeout(() => {
+                enemy.element.remove();
+            }, 1000);
+            return false;
+        }
+        return true;
+    });
+}
+
+function updateEnemyBehavior(enemy) {
+    if (enemy.hp <= 0) return;
+    
+    // Find nearest non-defeated player
+    const players = document.querySelectorAll('.stick-figure:not(.defeated)');
+    let nearestPlayer = null;
+    let minDistance = Infinity;
+    
+    players.forEach(player => {
+        const distance = calculateDistance(enemy.element, player);
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearestPlayer = player;
+        }
+    });
+    
+    if (nearestPlayer) {
+        // Move towards player if out of range
+        if (minDistance > enemy.range) {
+            moveTowardsTarget(enemy.element, nearestPlayer, enemy.spd);
+        }
+        // Attack if in range
+        else if (Date.now() - enemy.lastAttack >= 1000) {
+            const playerId = nearestPlayer.id;
+            const playerStats = calculatePlayerStats(playerId);
+            
+            // Calculate damage
+            const damage = Math.max(1, enemy.atk - playerStats.DEF);
+            
+            // Apply damage
+            if (!playerStats.currentHP) playerStats.currentHP = playerStats.HP;
+            playerStats.currentHP -= damage;
+            
+            // Update UI
+            updatePlayerCard(document.querySelector(`#${playerId}-card`), playerStats);
+            addCombatLog(`${enemy.name} dealt ${damage} damage to ${playerId}!`);
+            
+            // Check if player is defeated
+            if (playerStats.currentHP <= 0) {
+                nearestPlayer.classList.add('defeated');
+                addCombatLog(`${playerId} was defeated!`);
+            }
+            
+            enemy.lastAttack = Date.now();
+        }
+    }
+}
+
 function updateEnemyHealth(enemy) {
     const healthFill = enemy.element.querySelector('.enemy-health-fill');
     if (healthFill) {
@@ -567,7 +916,59 @@ function startBattleLoop() {
     if (battleLoopInterval) return;
     
     battleLoopInterval = setInterval(() => {
-        if (autoBattleEnabled) {
+        if (!autoBattleEnabled) return;
+        
+        try {
+            // Process each player's turn
+            const players = document.querySelectorAll('.stick-figure');
+            players.forEach(playerElement => {
+                // Skip if player is defeated
+                if (playerElement.classList.contains('defeated')) return;
+                
+                const playerId = playerElement.id;
+                const playerStats = calculatePlayerStats(playerId);
+                
+                // Handle priest healing
+                if (playerStats.HEAL) {
+                    players.forEach(otherPlayer => {
+                        if (otherPlayer !== playerElement && !otherPlayer.classList.contains('defeated')) {
+                            const distance = calculateDistance(playerElement, otherPlayer);
+                            if (distance <= playerStats.RANGE) {
+                                healPlayer(otherPlayer.id, playerStats.HEAL);
+                            }
+                        }
+                    });
+                }
+                
+                // Handle combat
+                const nearestEnemy = findNearestEnemy(playerElement);
+                if (nearestEnemy) {
+                    const distance = calculateDistance(playerElement, nearestEnemy.element);
+                    if (distance <= playerStats.RANGE) {
+                        attackEnemy(playerElement, nearestEnemy);
+                    } else {
+                        // Move towards enemy
+                        moveTowardsTarget(playerElement, nearestEnemy.element, playerStats.SPD);
+                    }
+                }
+            });
+            
+            // Process enemy turns
+            enemies.forEach(enemy => {
+                if (enemy.hp > 0) {
+                    updateEnemyBehavior(enemy);
+                }
+            });
+            
+            // Cleanup defeated enemies
+            cleanupDefeatedEnemies();
+        } catch (error) {
+            debugLog(`Battle loop error: ${error.message}`, 'error');
+            stopBattleLoop();
+        }
+        }
+    }, 1000); // Process combat every second
+}
             processCombatTurn();
         }
     }, 1000); // Process combat every second

@@ -9,10 +9,10 @@ function createEl(tag, props = {}, ...children) {
 
 // --- Game State ---
 const players = [
-  { id: 1, class: 'Warrior', hp: 100, maxHp: 100, atk: 10, equipment: {}, alive: true },
-  { id: 2, class: 'Archer', hp: 100, maxHp: 100, atk: 10, equipment: {}, alive: true },
-  { id: 3, class: 'Mage', hp: 100, maxHp: 100, atk: 10, equipment: {}, alive: true },
-  { id: 4, class: 'Priest', hp: 100, maxHp: 100, atk: 10, equipment: {}, alive: true }
+  { id: 1, class: 'Warrior', hp: 100, maxHp: 100, atk: 10, equipment: {}, alive: true, experience: 0, level: 1, nextLevelXP: 100 },
+  { id: 2, class: 'Archer', hp: 100, maxHp: 100, atk: 10, equipment: {}, alive: true, experience: 0, level: 1, nextLevelXP: 100 },
+  { id: 3, class: 'Mage', hp: 100, maxHp: 100, atk: 10, equipment: {}, alive: true, experience: 0, level: 1, nextLevelXP: 100 },
+  { id: 4, class: 'Priest', hp: 100, maxHp: 100, atk: 10, equipment: {}, alive: true, experience: 0, level: 1, nextLevelXP: 100 }
 ];
 let currentLevel = 1;
 let unlockedLevels = [1];
@@ -55,6 +55,28 @@ function renderMap() {
     minimap.appendChild(region);
   });
 }
+
+// Dynamic Map Generation
+function initializeMapSystem() {
+  const mapContainer = document.getElementById('map-container');
+
+  function generateLevel(levelNum) {
+      const level = document.createElement('div');
+      level.className = 'map-level';
+      level.textContent = `Level ${levelNum}`;
+      level.addEventListener('click', () => {
+          console.log(`Entering Level ${levelNum}`);
+      });
+      return level;
+  }
+
+  for (let i = 1; i <= 10; i++) {
+      const level = generateLevel(i);
+      mapContainer.appendChild(level);
+  }
+}
+
+initializeMapSystem();
 
 // --- Enter Level ---
 function enterLevel(levelNum) {
@@ -148,6 +170,8 @@ function renderPlayerCards() {
       <div>HP: ${player.hp}/${player.maxHp}</div>
       <div>ATK: ${player.atk}</div>
       <div>Weapon: ${player.equipment.weapon ? player.equipment.weapon.name : 'None'}</div>
+      <div>Level: ${player.level}</div>
+      <div>XP: ${player.experience}/${player.nextLevelXP}</div>
     `;
     cards.appendChild(card);
   });
@@ -217,6 +241,99 @@ function onLevelCleared() {
 }
 
 // --- UI Controls ---
+function switchTab(clickedBtn, tabIndex) {
+  const card = clickedBtn.closest('.player-card');
+  const tabs = card.querySelectorAll('.tab-btn');
+  const contents = card.querySelectorAll('.tab-content');
+  
+  // Remove active class from all tabs and contents
+  tabs.forEach(tab => tab.classList.remove('active'));
+  contents.forEach(content => content.classList.remove('active'));
+  
+  // Add active class to clicked tab and corresponding content
+  clickedBtn.classList.add('active');
+  contents[tabIndex].classList.add('active');
+}
+
 $('speed-slider').oninput = e => $('speed-label').textContent = `${e.target.value}x`;
 $('damage-slider').oninput = e => $('damage-label').textContent = `${e.target.value}x`;
 $('xp-slider').oninput = e => $('xp-label').textContent = `${e.target.value}x`;
+
+// Auto-Skill System Implementation
+function initializeAutoSkillSystem() {
+    const autoSkillToggle = document.getElementById('auto-skill-toggle');
+    const skillPrioritySliders = document.querySelectorAll('.skill-priority-slider');
+
+    if (autoSkillToggle) {
+        autoSkillToggle.addEventListener('change', () => {
+            console.log(`Auto-Skill: ${autoSkillToggle.checked ? 'Enabled' : 'Disabled'}`);
+        });
+    }
+
+    skillPrioritySliders.forEach(slider => {
+        slider.addEventListener('input', () => {
+            console.log(`Skill Priority Updated: ${slider.value}`);
+        });
+    });
+}
+
+initializeAutoSkillSystem();
+
+// Enemy AI Implementation
+function initializeEnemyAI() {
+    enemies.forEach(enemy => {
+        enemy.move = () => {
+            console.log(`${enemy.name} is moving dynamically.`);
+        };
+
+        enemy.attack = () => {
+            console.log(`${enemy.name} is attacking.`);
+        };
+    });
+}
+
+initializeEnemyAI();
+
+// Auto-Equipment System
+function initializeAutoEquipSystem() {
+    players.forEach(player => {
+        player.autoEquip = (item) => {
+            console.log(`${player.name} auto-equipped ${item.name}`);
+        };
+    });
+}
+
+initializeAutoEquipSystem();
+
+// Combat Mechanics Enhancement
+function initializeCombatMechanics() {
+    players.forEach(player => {
+        player.attack = (enemy) => {
+            console.log(`${player.name} attacks ${enemy.name} for ${player.atk} damage.`);
+            enemy.hp -= player.atk;
+            if (enemy.hp <= 0) {
+                console.log(`${enemy.name} is defeated!`);
+            }
+        };
+    });
+}
+
+initializeCombatMechanics();
+
+// Leveling System Implementation
+function initializeLevelingSystem() {
+    players.forEach(player => {
+        player.gainExperience = (xp) => {
+            player.experience += xp;
+            console.log(`${player.name} gained ${xp} XP.`);
+            if (player.experience >= player.nextLevelXP) {
+                player.level++;
+                player.experience = 0;
+                player.nextLevelXP *= 1.5;
+                console.log(`${player.name} leveled up to Level ${player.level}!`);
+              }
+        };
+    });
+}
+
+initializeLevelingSystem();
