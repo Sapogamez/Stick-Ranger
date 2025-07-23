@@ -3,6 +3,85 @@
 
 class StickRangerGame {
     constructor() {
+        // Map and level definitions
+        this.mapDefinitions = {
+            plains: {
+                name: 'Plains',
+                levels: [
+                    {
+                        id: 1,
+                        name: 'Grassy Fields',
+                        enemies: [
+                            { type: 'Slime', level: 1, count: 3 },
+                            { type: 'Rabbit', level: 2, count: 2 }
+                        ],
+                        background: 'plains',
+                        rewards: {
+                            exp: 50,
+                            gold: 25,
+                            items: ['Wooden Sword', 'Leather Armor']
+                        }
+                    },
+                    {
+                        id: 2,
+                        name: 'Rolling Hills',
+                        enemies: [
+                            { type: 'Wolf', level: 3, count: 2 },
+                            { type: 'Bandit', level: 4, count: 1 }
+                        ],
+                        background: 'hills',
+                        rewards: {
+                            exp: 75,
+                            gold: 40,
+                            items: ['Iron Sword', 'Chain Mail']
+                        }
+                    }
+                ]
+            },
+            forest: {
+                name: 'Forest',
+                levels: [
+                    {
+                        id: 3,
+                        name: 'Dark Woods',
+                        enemies: [
+                            { type: 'Spider', level: 5, count: 4 },
+                            { type: 'Goblin', level: 6, count: 2 }
+                        ],
+                        background: 'forest',
+                        rewards: {
+                            exp: 100,
+                            gold: 60,
+                            items: ['Bow', 'Forest Cloak']
+                        }
+                    }
+                ]
+            },
+            cave: {
+                name: 'Cave',
+                levels: [
+                    {
+                        id: 4,
+                        name: 'Crystal Cave',
+                        enemies: [
+                            { type: 'Bat', level: 7, count: 3 },
+                            { type: 'Rock Golem', level: 8, count: 1 }
+                        ],
+                        background: 'cave',
+                        rewards: {
+                            exp: 150,
+                            gold: 100,
+                            items: ['Magic Staff', 'Crystal Armor']
+                        }
+                    }
+                ]
+            }
+        };
+
+        this.currentZone = 'plains';
+        this.currentLevel = 1;
+        this.unlockedLevels = new Set([1]); // Start with first level unlocked
+
         // Class skill definitions
         this.skillDefinitions = {
             Warrior: {
@@ -149,6 +228,7 @@ class StickRangerGame {
         this.initializeCombatLog();
         this.initializeResponsiveFeatures();
         this.initializeSkillStyles();
+        this.initializeMapSystem();
         this.startGameLoop();
         
         console.log('🎮 Stick Ranger Final Restoration - Initialized!');
@@ -220,8 +300,25 @@ class StickRangerGame {
         });
 
         // Map interaction
-        document.getElementById('level-1')?.addEventListener('click', () => {
-            this.logCombat('Exploring Level 1...');
+        document.querySelectorAll('.map-region').forEach(region => {
+            region.addEventListener('click', (e) => {
+                const zone = e.currentTarget.dataset.zone;
+                if (zone) {
+                    this.selectZone(zone);
+                }
+            });
+        });
+
+        // Level selection
+        document.querySelectorAll('.level-node').forEach(node => {
+            node.addEventListener('click', (e) => {
+                const levelId = parseInt(e.currentTarget.dataset.level);
+                if (this.unlockedLevels.has(levelId)) {
+                    this.startLevel(levelId);
+                } else {
+                    this.logCombat('Level locked! Complete previous levels first.');
+                }
+            });
         });
 
         // Inventory drag and drop (touch-friendly)
@@ -1020,6 +1117,227 @@ class StickRangerGame {
         });
     }
 
+    // ===== MAP SYSTEM =====
+    selectZone(zoneName) {
+        if (this.mapDefinitions[zoneName]) {
+            this.currentZone = zoneName;
+            this.updateMapDisplay();
+            this.logCombat(`Entered ${this.mapDefinitions[zoneName].name} zone`);
+        }
+    }
+
+    startLevel(levelId) {
+        const currentZoneData = this.mapDefinitions[this.currentZone];
+        const level = currentZoneData.levels.find(l => l.id === levelId);
+        
+        if (!level) {
+            this.logCombat('Level not found!');
+            return;
+        }
+
+        this.currentLevel = levelId;
+        this.logCombat(`Starting ${level.name}...`);
+        
+        // Generate and spawn enemies for this level
+        this.generateLevelEnemies(level);
+        
+        // Update map display
+        this.updateMapDisplay();
+        
+        // Update game state for the new level
+        this.gameState.currentLevel = level;
+        
+        // Trigger level start event
+        this.onLevelStart(level);
+    }
+
+    generateLevelEnemies(level) {
+        // Clear existing enemies
+        this.gameState.enemies = [];
+        
+        // Generate new enemies based on level definition
+        level.enemies.forEach(enemyDef => {
+            for (let i = 0; i < enemyDef.count; i++) {
+                const enemy = this.createEnemy(enemyDef.type, enemyDef.level);
+                this.gameState.enemies.push(enemy);
+            }
+        });
+        
+        // Update enemy display
+        this.updateEnemyDisplay();
+    }
+
+    createEnemy(type, level) {
+        // Base stats for different enemy types
+        const enemyStats = {
+            Slime: { hp: 50, attack: 5, defense: 2 },
+            Wolf: { hp: 80, attack: 8, defense: 3 },
+            Bandit: { hp: 100, attack: 12, defense: 5 },
+            Spider: { hp: 60, attack: 15, defense: 2 },
+            Goblin: { hp: 120, attack: 10, defense: 6 },
+            Bat: { hp: 40, attack: 18, defense: 1 },
+            'Rock Golem': { hp: 200, attack: 15, defense: 12 }
+        };
+
+        const baseStats = enemyStats[type] || enemyStats.Slime;
+        const levelMultiplier = 1 + (level - 1) * 0.2; // 20% increase per level
+
+        return {
+            id: this.gameState.enemies.length + 1,
+            type: type,
+            level: level,
+            maxHp: Math.floor(baseStats.hp * levelMultiplier),
+            hp: Math.floor(baseStats.hp * levelMultiplier),
+            attack: Math.floor(baseStats.attack * levelMultiplier),
+            defense: Math.floor(baseStats.defense * levelMultiplier)
+        };
+    }
+
+    updateMapDisplay() {
+        // Update zone highlights
+        document.querySelectorAll('.map-region').forEach(region => {
+            region.classList.toggle('active-region', region.dataset.zone === this.currentZone);
+        });
+
+        // Update level nodes
+        document.querySelectorAll('.level-node').forEach(node => {
+            const levelId = parseInt(node.dataset.level);
+            node.classList.toggle('unlocked', this.unlockedLevels.has(levelId));
+            node.classList.toggle('current', levelId === this.currentLevel);
+        });
+
+        // Update minimap
+        this.updateMinimap();
+    }
+
+    updateMinimap() {
+        const minimap = document.getElementById('minimap');
+        if (!minimap) return;
+
+        // Clear existing minimap
+        minimap.innerHTML = '';
+
+        // Create zone representation
+        const zoneElement = document.createElement('div');
+        zoneElement.className = `minimap-zone ${this.currentZone}`;
+        
+        // Add level markers
+        const currentZoneData = this.mapDefinitions[this.currentZone];
+        currentZoneData.levels.forEach(level => {
+            const levelMarker = document.createElement('div');
+            levelMarker.className = `level-marker ${this.unlockedLevels.has(level.id) ? 'unlocked' : 'locked'}`;
+            levelMarker.dataset.level = level.id;
+            levelMarker.textContent = level.id;
+            
+            if (level.id === this.currentLevel) {
+                levelMarker.classList.add('current');
+            }
+            
+            zoneElement.appendChild(levelMarker);
+        });
+
+        minimap.appendChild(zoneElement);
+    }
+
+    updateEnemyDisplay() {
+        const enemyContainer = document.querySelector('.enemy-container');
+        if (!enemyContainer) return;
+
+        enemyContainer.innerHTML = '';
+        
+        this.gameState.enemies.forEach(enemy => {
+            const enemyElement = document.createElement('div');
+            enemyElement.className = `enemy ${enemy.type.toLowerCase()}`;
+            enemyElement.id = `enemy${enemy.id}`;
+            
+            const hpBar = document.createElement('div');
+            hpBar.className = 'hp-bar';
+            hpBar.style.width = '100%';
+            
+            const enemyInfo = document.createElement('div');
+            enemyInfo.className = 'enemy-info';
+            enemyInfo.textContent = `${enemy.type} Lv.${enemy.level}`;
+            
+            enemyElement.appendChild(hpBar);
+            enemyElement.appendChild(enemyInfo);
+            enemyContainer.appendChild(enemyElement);
+            
+            enemyElement.addEventListener('click', () => this.attackEnemy(enemy.id));
+        });
+    }
+
+    onLevelStart(level) {
+        // Set up the level background
+        const gameBox = document.querySelector('.game-box');
+        if (gameBox) {
+            gameBox.className = `game-box background-${level.background}`;
+        }
+
+        // Initialize level-specific elements
+        this.initializeLevelElements(level);
+
+        // Start background music if available
+        this.playLevelMusic(level);
+    }
+
+    initializeLevelElements(level) {
+        // Add any level-specific decorative elements
+        const gameBox = document.querySelector('.game-box');
+        if (!gameBox) return;
+
+        // Clear existing decorative elements
+        const existingDecorations = gameBox.querySelectorAll('.decoration');
+        existingDecorations.forEach(dec => dec.remove());
+
+        // Add new decorative elements based on the level theme
+        if (level.background === 'forest') {
+            this.addForestDecorations(gameBox);
+        } else if (level.background === 'cave') {
+            this.addCaveDecorations(gameBox);
+        }
+    }
+
+    addForestDecorations(container) {
+        // Add trees, bushes, etc.
+        for (let i = 0; i < 5; i++) {
+            const tree = document.createElement('div');
+            tree.className = 'decoration tree';
+            tree.style.left = `${Math.random() * 80 + 10}%`;
+            tree.style.bottom = '0';
+            container.appendChild(tree);
+        }
+    }
+
+    addCaveDecorations(container) {
+        // Add stalactites, crystals, etc.
+        for (let i = 0; i < 3; i++) {
+            const crystal = document.createElement('div');
+            crystal.className = 'decoration crystal';
+            crystal.style.left = `${Math.random() * 80 + 10}%`;
+            crystal.style.bottom = '0';
+            container.appendChild(crystal);
+        }
+    }
+
+    playLevelMusic(level) {
+        // Implementation would depend on your audio system
+        const musicTrack = this.getLevelMusic(level.background);
+        if (musicTrack) {
+            // Play the music track
+            this.logCombat(`Playing ${level.background} theme`);
+        }
+    }
+
+    getLevelMusic(background) {
+        // Map background types to music tracks
+        const musicTracks = {
+            plains: 'plains-theme.mp3',
+            forest: 'forest-theme.mp3',
+            cave: 'cave-theme.mp3'
+        };
+        return musicTracks[background];
+    }
+
     // ===== UTILITY FUNCTIONS =====
     debounce(func, wait) {
         let timeout;
@@ -1180,6 +1498,67 @@ class StickRangerGame {
                 keyframes.remove();
             });
         }
+    }
+
+    initializeMapSystem() {
+        // Create level nodes for each zone
+        Object.entries(this.mapDefinitions).forEach(([zoneName, zoneData]) => {
+            const zoneElement = document.querySelector(`.map-region[data-zone="${zoneName}"]`);
+            if (!zoneElement) return;
+
+            // Create level nodes
+            const levelContainer = document.createElement('div');
+            levelContainer.className = 'level-nodes';
+            
+            zoneData.levels.forEach(level => {
+                const levelNode = document.createElement('div');
+                levelNode.className = 'level-node';
+                levelNode.dataset.level = level.id;
+                levelNode.dataset.zone = zoneName;
+                
+                // Check if level is unlocked
+                if (this.unlockedLevels.has(level.id)) {
+                    levelNode.classList.add('unlocked');
+                }
+                
+                // Add level number
+                const levelNumber = document.createElement('span');
+                levelNumber.textContent = level.id;
+                levelNode.appendChild(levelNumber);
+                
+                // Add tooltip with level info
+                const tooltip = document.createElement('div');
+                tooltip.className = 'level-tooltip';
+                tooltip.innerHTML = `
+                    <h4>${level.name}</h4>
+                    <p>Level ${level.id}</p>
+                    <p>Enemies:</p>
+                    <ul>
+                        ${level.enemies.map(e => `<li>${e.count}x ${e.type} (Lv.${e.level})</li>`).join('')}
+                    </ul>
+                `;
+                levelNode.appendChild(tooltip);
+                
+                levelContainer.appendChild(levelNode);
+                
+                // Add event listener
+                levelNode.addEventListener('click', () => {
+                    if (this.unlockedLevels.has(level.id)) {
+                        this.startLevel(level.id);
+                    } else {
+                        this.logCombat('Level locked! Complete previous levels first.');
+                    }
+                });
+            });
+            
+            zoneElement.appendChild(levelContainer);
+        });
+
+        // Initialize the minimap
+        this.updateMapDisplay();
+
+        // Start with the first level
+        this.startLevel(1);
     }
 
     initializeSkillStyles() {

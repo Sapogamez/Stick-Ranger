@@ -58,25 +58,76 @@ function renderMap() {
 
 // Dynamic Map Generation
 function initializeMapSystem() {
-  const mapContainer = document.getElementById('map-container');
+  const map = {
+    zones: [
+      {
+        name: 'Plains',
+        levels: [
+          { id: 1, enemies: [], loot: [] },
+          { id: 2, enemies: [], loot: [] }
+        ]
+      },
+      {
+        name: 'Forest',
+        levels: [
+          { id: 3, enemies: [], loot: [] },
+          { id: 4, enemies: [], loot: [] }
+        ]
+      },
+      {
+        name: 'Cave',
+        levels: [
+          { id: 5, enemies: [], loot: [] },
+          { id: 6, enemies: [], loot: [] }
+        ]
+      }
+    ]
+  };
 
-  function generateLevel(levelNum) {
-      const level = document.createElement('div');
-      level.className = 'map-level';
-      level.textContent = `Level ${levelNum}`;
-      level.addEventListener('click', () => {
-          console.log(`Entering Level ${levelNum}`);
-      });
-      return level;
-  }
+  map.zones.forEach(zone => {
+    zone.levels.forEach(level => {
+      const levelMultiplier = 1 + (level.id - 1) * 0.25;
+      level.enemies = Array.from({ length: 4 + level.id }, (_, i) => ({
+        id: i,
+        hp: Math.floor(100 * levelMultiplier),
+        atk: Math.floor(10 * levelMultiplier),
+        alive: true
+      }));
+      level.loot = generateLoot(level.id, levelMultiplier);
+    });
+  });
 
-  for (let i = 1; i <= 10; i++) {
-      const level = generateLevel(i);
-      mapContainer.appendChild(level);
-  }
+  return map;
 }
 
-initializeMapSystem();
+function renderMap(map) {
+  const mapContainer = document.getElementById('map-container');
+  mapContainer.innerHTML = '';
+  map.zones.forEach(zone => {
+    const zoneDiv = document.createElement('div');
+    zoneDiv.className = 'zone';
+    zoneDiv.innerHTML = `<h3>${zone.name}</h3>`;
+    zone.levels.forEach(level => {
+      const levelDiv = document.createElement('div');
+      levelDiv.className = 'level';
+      levelDiv.innerHTML = `Level ${level.id}`;
+      levelDiv.addEventListener('click', () => {
+        console.log(`Entering Level ${level.id} in ${zone.name}`);
+        startLevel(level);
+      });
+      zoneDiv.appendChild(levelDiv);
+    });
+    mapContainer.appendChild(zoneDiv);
+  });
+}
+
+function startLevel(level) {
+  enemies = level.enemies;
+  console.log(`Starting Level ${level.id} with ${enemies.length} enemies.`);
+}
+
+const gameMap = initializeMapSystem();
+renderMap(gameMap);
 
 // --- Enter Level ---
 function enterLevel(levelNum) {
@@ -284,6 +335,19 @@ function initializeEnemyAI() {
     enemies.forEach(enemy => {
         enemy.move = () => {
             console.log(`${enemy.name} is moving dynamically.`);
+          // Move enemy towards player
+          const player = players[0]; // Targeting first player for simplicity
+          const enemyEl = $(`enemy${enemy.id}`);
+          if (player && enemyEl) {
+            const enemyRect = enemyEl.getBoundingClientRect();
+            const playerRect = playerEl.getBoundingClientRect();
+            const dx = playerRect.x - enemyRect.x;
+            const dy = playerRect.y - enemyRect.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const moveX = (dx / distance) * enemy.speed;
+            const moveY = (dy / distance) * enemy.speed;
+            enemyEl.style.transform = `translate(${moveX}px, ${moveY}px)`;
+          }
         };
 
         enemy.attack = () => {
@@ -337,3 +401,186 @@ function initializeLevelingSystem() {
 }
 
 initializeLevelingSystem();
+
+// Enemy Movement Logic
+function updateEnemyPositions() {
+  enemies.forEach(enemy => {
+    if (!enemy.alive) return;
+    const enemyEl = $(`enemy${enemy.id}`);
+    if (enemyEl) {
+      const player = players[0]; // Targeting first player for simplicity
+      const enemyRect = enemyEl.getBoundingClientRect();
+      const playerRect = player.getBoundingClientRect();
+      const dx = playerRect.x - enemyRect.x;
+      const dy = playerRect.y - enemyRect.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const moveX = (dx / distance) * enemy.speed;
+      const moveY = (dy / distance) * enemy.speed;
+      enemyEl.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    }
+  });
+}
+
+// Game Loop
+function gameLoop() {
+  updateEnemyPositions();
+  requestAnimationFrame(gameLoop);
+}
+
+requestAnimationFrame(gameLoop);
+
+// --- Enemy Spawning Logic ---
+function spawnEnemies() {
+  enemies.forEach(enemy => {
+    enemy.position = { x: gameMap.width - 50, y: gameMap.height - 50 }; // Bottom-right corner
+    enemy.alive = true;
+  });
+}
+
+// --- Game Initialization ---
+function initializeGame() {
+  // Removed automatic enemy spawning at start
+}
+
+// --- Setup Autobattler Button ---
+function setupAutobattlerButton() {
+  const autobattlerButton = document.getElementById('autobattler-button');
+  autobattlerButton.addEventListener('click', () => {
+    spawnEnemies();
+  });
+}
+
+setupAutobattlerButton();
+
+// --- Test Game Button ---
+function setupTestGameButton() {
+  const testButton = document.createElement('button');
+  testButton.id = 'test-game-button';
+  testButton.textContent = 'Test Entire Game';
+  testButton.style.position = 'absolute';
+  testButton.style.top = '10px';
+  testButton.style.right = '10px';
+  testButton.style.zIndex = '1000';
+
+  const progressContainer = document.createElement('div');
+  progressContainer.id = 'test-progress-container';
+  progressContainer.style.position = 'absolute';
+  progressContainer.style.top = '50px';
+  progressContainer.style.right = '10px';
+  progressContainer.style.zIndex = '1000';
+  progressContainer.style.backgroundColor = '#fff';
+  progressContainer.style.border = '1px solid #ccc';
+  progressContainer.style.padding = '10px';
+  progressContainer.style.display = 'none';
+
+  document.body.appendChild(progressContainer);
+
+  testButton.addEventListener('click', async () => {
+    progressContainer.style.display = 'block';
+    progressContainer.innerHTML = '<h4>Testing Progress</h4><ul id="progress-list"></ul>';
+    const progressList = document.getElementById('progress-list');
+
+    const updateProgress = (message, success = true) => {
+      const item = document.createElement('li');
+      item.textContent = message;
+      item.style.color = success ? 'green' : 'red';
+      progressList.appendChild(item);
+    };
+
+    try {
+      updateProgress('Starting full game testing...');
+
+      // Test map system
+      updateProgress('Testing map system...');
+      const map = initializeMapSystem();
+      renderMap(map);
+      updateProgress('Map system test completed.');
+
+      // Test level generation
+      updateProgress('Testing level generation...');
+      for (let i = 1; i <= 10; i++) {
+        const loot = generateLevel(i);
+        handleLootDrop(loot);
+      }
+      updateProgress('Level generation test completed.');
+
+      // Test combat AI
+      updateProgress('Testing combat AI...');
+      setInterval(advancedCombatAI, 1000);
+      updateProgress('Combat AI test initiated.');
+
+      // Test rendering functions
+      updateProgress('Testing rendering functions...');
+      renderEnemies();
+      renderPlayerCards();
+      renderInventory();
+      renderCombatLog();
+      updateProgress('Rendering functions test completed.');
+
+      updateProgress('Full game testing completed.');
+    } catch (error) {
+      updateProgress(`Error: ${error.message}`, false);
+    }
+  });
+
+  document.body.appendChild(testButton);
+}
+
+setupTestGameButton();
+
+// --- Advanced Combat AI ---
+function advancedCombatAI() {
+  enemies.forEach(enemy => {
+    if (!enemy.alive) return;
+
+    // Enemy AI: Move towards nearest player and attack if in range
+    const nearestPlayer = players.reduce((closest, player) => {
+      if (!player.alive) return closest;
+      const distance = Math.hypot(player.position.x - enemy.position.x, player.position.y - enemy.position.y);
+      return distance < closest.distance ? { player, distance } : closest;
+    }, { player: null, distance: Infinity }).player;
+
+    if (nearestPlayer) {
+      const distance = Math.hypot(nearestPlayer.position.x - enemy.position.x, nearestPlayer.position.y - enemy.position.y);
+      if (distance <= enemy.attackRange) {
+        nearestPlayer.hp -= enemy.atk;
+        console.log(`${enemy.name} attacks ${nearestPlayer.class} for ${enemy.atk} damage.`);
+        if (nearestPlayer.hp <= 0) {
+          nearestPlayer.alive = false;
+          console.log(`${nearestPlayer.class} has been defeated.`);
+        }
+      } else {
+        const directionX = nearestPlayer.position.x - enemy.position.x;
+        const directionY = nearestPlayer.position.y - enemy.position.y;
+        const magnitude = Math.hypot(directionX, directionY);
+        enemy.position.x += (directionX / magnitude) * enemy.speed;
+        enemy.position.y += (directionY / magnitude) * enemy.speed;
+      }
+    }
+  });
+
+  players.forEach(player => {
+    if (!player.alive) return;
+
+    // Player AI: Attack nearest enemy if in range
+    const nearestEnemy = enemies.reduce((closest, enemy) => {
+      if (!enemy.alive) return closest;
+      const distance = Math.hypot(enemy.position.x - player.position.x, enemy.position.y - player.position.y);
+      return distance < closest.distance ? { enemy, distance } : closest;
+    }, { enemy: null, distance: Infinity }).enemy;
+
+    if (nearestEnemy) {
+      const distance = Math.hypot(nearestEnemy.position.x - player.position.x, nearestEnemy.position.y - player.position.y);
+      if (distance <= player.attackRange) {
+        nearestEnemy.hp -= player.atk;
+        console.log(`${player.class} attacks ${nearestEnemy.name} for ${player.atk} damage.`);
+        if (nearestEnemy.hp <= 0) {
+          nearestEnemy.alive = false;
+          console.log(`${nearestEnemy.name} has been defeated.`);
+        }
+      }
+    }
+  });
+}
+
+setInterval(advancedCombatAI, 1000); // Run AI every second
