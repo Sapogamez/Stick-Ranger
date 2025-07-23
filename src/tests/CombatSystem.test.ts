@@ -1,9 +1,9 @@
-import { CombatSystem } from '../systems/CombatSystem';
+import { CombatSystem } from '../systems/combat/CombatSystem';
 
 // Modify CombatSystem for testing
 class TestableCombatSystem extends CombatSystem {
   getAutoAttackEnabled(): boolean {
-    return this.autoAttackEnabled;
+    return super.getAutoAttackEnabled();
   }
 }
 

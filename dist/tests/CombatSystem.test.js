@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const CombatSystem_1 = require("../systems/CombatSystem");
+const CombatSystem_1 = require("../systems/combat/CombatSystem");
 // Modify CombatSystem for testing
 class TestableCombatSystem extends CombatSystem_1.CombatSystem {
     getAutoAttackEnabled() {
-        return this.autoAttackEnabled;
+        return super.getAutoAttackEnabled();
     }
 }
 describe('CombatSystem', () => {
