@@ -1,0 +1,103 @@
+/* Game-specific styles */
+
+.game-board {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.game-over-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.game-over-screen h1 {
+  color: #e74c3c;
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.players-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.enemies-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.player, .enemy {
+  background-color: #34495e;
+  border: 2px solid #95a5a6;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.player {
+  border-color: #3498db;
+}
+
+.enemy {
+  border-color: #e74c3c;
+}
+
+.health-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #7f8c8d;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.health-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.health-bar-fill.player-health[data-health="high"] {
+  background-color: #27ae60;
+}
+
+.health-bar-fill.player-health[data-health="medium"] {
+  background-color: #f39c12;
+}
+
+.health-bar-fill.player-health[data-health="low"] {
+  background-color: #e67e22;
+}
+
+.health-bar-fill.player-health[data-health="critical"] {
+  background-color: #e74c3c;
+}
+
+.health-bar-fill.enemy-health[data-health="high"] {
+  background-color: #27ae60;
+}
+
+.health-bar-fill.enemy-health[data-health="medium"] {
+  background-color: #f39c12;
+}
+
+.health-bar-fill.enemy-health[data-health="low"] {
+  background-color: #e67e22;
+}
+
+.health-bar-fill.enemy-health[data-health="critical"] {
+  background-color: #e74c3c;
+}
