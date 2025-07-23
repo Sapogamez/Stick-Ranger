@@ -1,4 +1,15 @@
 {
+  "name": "stick-ranger",
+  "version": "1.0.0",
+  "description": "A TypeScript-based stick figure combat game with React UI",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "clean": "rm -rf dist"
+  },
   "dependencies": {
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
@@ -7,8 +18,11 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@types/jest": "^30.0.0",
+
     "ts-jest": "^29.4.0",
     "typescript": "^5.8.3"
-  }
+  },
+  "keywords": ["game", "typescript", "react", "canvas", "entity-system"],
+  "author": "Stick Ranger Team",
+  "license": "MIT"
 }
